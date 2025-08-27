@@ -1,10 +1,10 @@
 NAME = scop
 
 SRCS_DIR = src
-HEADERS_DIR = includes
+HEADERS_DIR = include
 BUILD_DIR = build
 
-SRCS = main.cpp Viewer.cpp
+SRCS = main.cpp gl.cpp Engine.cpp
 
 SRCS := $(addprefix $(SRCS_DIR)/, $(SRCS))
 
@@ -16,7 +16,7 @@ CXX = c++
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++20 -I$(HEADERS_DIR)# -O2
 
-LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
+LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 
 $(NAME): $(OBJS)
 	@ echo " \033[33m  Compiling Scop...\033[m"
