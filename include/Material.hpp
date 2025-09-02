@@ -9,5 +9,5 @@ class Material
 
   private:
 	Vector<4> _diffuse;
-	uint16_t  _textureID;
+	int16_t   _textureID;
 };

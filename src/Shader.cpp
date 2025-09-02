@@ -13,11 +13,11 @@ Shader::Shader(const std::string &vert, const std::string &frag)
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 
-	int success;
+	int success = 1;
 	glGetProgramiv(shaderProgram, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		char infoLog[512];
+		char infoLog[512] = "";
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		throw std::runtime_error("failed to link shaders: " + std::string(infoLog));
 	}

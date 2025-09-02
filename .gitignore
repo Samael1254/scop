@@ -1,6 +1,7 @@
-resources
+resources/
 scop
 test/
 build/
 compile_flags.txt
 valgrind.supp
+matrix/

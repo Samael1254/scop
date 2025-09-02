@@ -4,9 +4,8 @@
 #include "Model.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
-#include <cstdint>
-#include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <glad/gl.h>
 #include <vector>
 
 class Renderer
@@ -19,10 +18,8 @@ class Renderer
 	void setPolygonMode(int polygonMode);
 
   private:
-	std::vector<uint32_t> _vertexArrayIDs;
-
-	std::vector<Shader>   _shaders;
-	std::vector<Model>    _models;
+	Model                 _model;
+	Shader                _shader;
 	std::vector<Material> _materials;
 	std::vector<Texture>  _textures;
 
