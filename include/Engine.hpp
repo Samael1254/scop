@@ -1,11 +1,13 @@
+#pragma once
+
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 class Engine
 {
   public:
-	Engine();
-	Engine(int width, int height);
+	Engine(bool verbose = false);
+	Engine(int width, int height, bool verbose = false);
 	~Engine();
 
 	void run();
@@ -14,12 +16,16 @@ class Engine
 	int         _width;
 	int         _height;
 	GLFWwindow *_window;
+	bool        _verbose;
 
 	void        _init();
-	static void _initGLFW();
+	void        _initGLFW() const;
 	void        _createWindow();
-	void        _initGLAD() const;
-	void        _renderLoop();
-
 	static void _frameBufferSizeCallback(GLFWwindow *window, int width, int height);
+	void        _initGLAD();
+
+	void _close();
+
+	void _renderLoop();
+	void _processInput();
 };
