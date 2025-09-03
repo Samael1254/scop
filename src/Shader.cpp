@@ -13,8 +13,8 @@ Shader::Shader(const std::string &vert, const std::string &frag)
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 
-	int success = 1;
-	glGetProgramiv(shaderProgram, GL_COMPILE_STATUS, &success);
+	int success;
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success)
 	{
 		char infoLog[512] = "";

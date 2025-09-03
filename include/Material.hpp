@@ -9,5 +9,6 @@ class Material
 
   private:
 	Vector<4> _diffuse;
+	Vector<4> _ambient;
 	int16_t   _textureID;
 };

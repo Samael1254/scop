@@ -87,7 +87,7 @@ void Engine::_close()
 
 void Engine::_renderLoop()
 {
-	Renderer renderer;
+	Renderer renderer(_width, _height);
 
 	while (!glfwWindowShouldClose(_window))
 	{

@@ -1,17 +1,18 @@
 #pragma once
 
+#include "Camera.hpp"
 #include "Material.hpp"
 #include "Model.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
-#include <GLFW/glfw3.h>
 #include <glad/gl.h>
+#include <GLFW/glfw3.h>
 #include <vector>
 
 class Renderer
 {
   public:
-	Renderer();
+	Renderer(int width, int height);
 	~Renderer() = default;
 
 	void render();
@@ -22,8 +23,8 @@ class Renderer
 	Shader                _shader;
 	std::vector<Material> _materials;
 	std::vector<Texture>  _textures;
-
-	int _polygonMode;
+	Camera                _camera;
+	int                   _polygonMode;
 
 	void _init();
 };

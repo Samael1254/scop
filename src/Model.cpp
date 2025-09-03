@@ -1,10 +1,13 @@
 #include "Model.hpp"
+#include "liblinal.hpp"
+#include "Matrix.hpp"
 #include "Shader.hpp"
 #include "Vector.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <cstdlib>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <sys/types.h>
 #include <vector>
@@ -13,6 +16,12 @@ Model::Model(const std::string &filepath)
 {
 	_loadModel(filepath);
 	_setup();
+	// for (unsigned int i = 0; i < _vertices.size(); i++)
+	// 	std::cout << _vertices[i] << " ";
+	// std::cout << "\n ";
+	// for (unsigned int i = 0; i < _indices.size(); i++)
+	// 	std::cout << _indices[i] << " ";
+	// std::cout << "\n ";
 }
 
 void Model::draw(const Shader &shader)
@@ -20,6 +29,16 @@ void Model::draw(const Shader &shader)
 	shader.use();
 	glBindVertexArray(_vertexArrayID);
 	glDrawElements(GL_TRIANGLES, static_cast<int>(_indices.size()), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+Matrix<4, 4> Model::matrix() const
+{
+	Matrix<4, 4> model;
+	model = Matrix<4, 4>::createTranslationMatrix(_position);
+	model = model * Matrix<4, 4>::createRotationMatrix(_rotation.x(), XAxis);
+	model = model * Matrix<4, 4>::createScalingMatrix({_scale.x(), _scale.y(), _scale.z(), 1});
+	return model;
 }
 
 void Model::_loadModel(const std::string &filepath)
@@ -125,10 +144,23 @@ void Model::_setup()
 
 	_indices = _createIndices();
 	_vertices = _createVertices();
-	glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices.data()), _vertices.data(), GL_STATIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(_indices.data()), _indices.data(), GL_STATIC_DRAW);
+	// clang-format off
+	// _vertices = {
+	// 	0.5F, 0.5F, 0.0F, // top right
+	// 	0.5F, -0.5F, 0.0F, // bottom right
+	// 	-0.5F, -0.5F, 0.0F, // bottom left
+	// 	-0.5F, 0.5F, 0.0F // top left;
+	// };
+	// _indices = {
+	//     0, 1, 3,
+	// 	1, 2, 3,
+	// };
+	// clang-format on
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), nullptr);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * _indices.size(), _indices.data(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 	glEnableVertexAttribArray(0);
 	// glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
 	// glEnableVertexAttribArray(1);

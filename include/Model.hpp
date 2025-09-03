@@ -11,7 +11,8 @@ class Model
   public:
 	Model(const std::string &filepath);
 
-	void draw(const Shader &shader);
+	void         draw(const Shader &shader);
+	Matrix<4, 4> matrix() const;
 
   private:
 	Vector<3> _position;
