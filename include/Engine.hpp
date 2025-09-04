@@ -1,7 +1,9 @@
 #pragma once
 
-#include <glad/gl.h>
+#include "Renderer.hpp"
 #include <GLFW/glfw3.h>
+#include <glad/gl.h>
+#include <optional>
 
 class Engine
 {
@@ -17,6 +19,7 @@ class Engine
 	int         _height;
 	GLFWwindow *_window;
 	bool        _verbose;
+	// Renderer    _renderer;
 
 	void        _init();
 	void        _initGLFW() const;
@@ -26,6 +29,8 @@ class Engine
 
 	void _close();
 
-	void _renderLoop();
-	void _processInput();
+	void        _renderLoop();
+	void        _processInput(Renderer &renderer);
+	static void _mouseScrollCallback(GLFWwindow *window, double xOffset, double yOffset);
+	// void        _onScroll(float offset);
 };

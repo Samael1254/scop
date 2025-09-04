@@ -15,7 +15,6 @@
 Model::Model(const std::string &filepath) : _scale({1, 1, 1})
 {
 	_loadModel(filepath);
-	// _position = {0.1, 0.2, 0};
 	_setup();
 	// for (unsigned int i = 0; i < _vertices.size(); i++)
 	// 	std::cout << _vertices[i] << " ";
@@ -23,6 +22,31 @@ Model::Model(const std::string &filepath) : _scale({1, 1, 1})
 	// for (unsigned int i = 0; i < _indices.size(); i++)
 	// 	std::cout << _indices[i] << " ";
 	// std::cout << "\n ";
+}
+
+Model::Model(const Model &other)
+{
+	*this = other;
+}
+
+Model &Model::operator=(const Model &other)
+{
+	if (this != &other)
+	{
+		_scale = other._scale;
+		_position = other._position;
+		_rotation = other._rotation;
+		_vs = other._vs;
+		_vns = other._vns;
+		_vts = other._vts;
+		_fs = other._fs;
+		_indices = other._indices;
+		_vertices = other._vertices;
+		_vertexArrayID = other._vertexArrayID;
+		_vertexBufferID = other._vertexBufferID;
+		_elementBufferID = other._elementBufferID;
+	}
+	return *this;
 }
 
 void Model::draw(const Shader &shader)
@@ -40,9 +64,7 @@ Matrix<4, 4> Model::matrix() const
 	for (unsigned int i = 0; i < 3; ++i)
 		if (_rotation[i] != 0)
 			model = model * Matrix<4, 4>::createRotationMatrix(_rotation[i], static_cast<EAxis>(i));
-	// model = model * Matrix<4, 4>::createRotationMatrix(_rotation.z(), ZAxis);
 	model = model * Matrix<4, 4>::createScalingMatrix({_scale.x(), _scale.y(), _scale.z(), 1});
-	std::cout << "Model Matrix: " << model << "\n";
 	return model;
 }
 
@@ -54,6 +76,7 @@ void Model::scale(float scale)
 void Model::incerementScale(float increment)
 {
 	_scale *= increment;
+	center();
 }
 
 void Model::rotate(const Vector<3> &rotator)
@@ -64,6 +87,36 @@ void Model::rotate(const Vector<3> &rotator)
 void Model::incrementRotation(float angle, EAxis axis)
 {
 	_rotation[axis] += angle;
+}
+
+void Model::translate(const Vector<3> &translator)
+{
+	_position = translator;
+}
+
+void Model::incrementTranslation(float distance, EAxis axis)
+{
+	_position[axis] += distance;
+}
+
+void Model::center()
+{
+	if (_vs.size() == 0)
+		return;
+
+	Vector<3> max = Matrix<3, 3>::createScalingMatrix(_scale) * _vs[0];
+	Vector<3> min = max;
+	for (unsigned int i = 1; i < _vs.size(); ++i)
+	{
+		for (unsigned int j = 0; j < 3; ++j)
+		{
+			max[j] = std::max(_vs[i][j] * _scale[j], max[j]);
+			min[j] = std::min(_vs[i][j] * _scale[j], min[j]);
+		}
+	}
+
+	Vector<3> center = (min + max) * 0.5;
+	_position = -1 * center;
 }
 
 void Model::_loadModel(const std::string &filepath)
@@ -169,18 +222,6 @@ void Model::_setup()
 
 	_indices = _createIndices();
 	_vertices = _createVertices();
-	// clang-format off
-	// _vertices = {
-	// 	0.5F, 0.5F, 0.0F, // top right
-	// 	0.5F, -0.5F, 0.0F, // bottom right
-	// 	-0.5F, -0.5F, 0.0F, // bottom left
-	// 	-0.5F, 0.5F, 0.0F // top left;
-	// };
-	// _indices = {
-	//     0, 1, 3,
-	// 	1, 2, 3,
-	// };
-	// clang-format on
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * _indices.size(), _indices.data(), GL_STATIC_DRAW);

@@ -27,6 +27,20 @@ Shader::Shader(const std::string &vert, const std::string &frag)
 	_id = shaderProgram;
 }
 
+Shader::Shader(const Shader &other)
+{
+	*this = other;
+}
+
+Shader &Shader::operator=(const Shader &other)
+{
+	if (this != &other)
+	{
+		_id = other._id;
+	}
+	return *this;
+}
+
 uint32_t Shader::id() const
 {
 	return _id;

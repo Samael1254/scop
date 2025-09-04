@@ -7,10 +7,26 @@
 #include <string>
 
 Renderer::Renderer(int width, int height)
-    : _model(Model("resources/42.obj")), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
-      _camera(width, height), _polygonMode(GL_LINE)
+    : _model(Model("./resources/marble_bust.obj")), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
+      _camera(width, height), _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
 {
-	_init();
+	init();
+}
+
+Renderer &Renderer::operator=(const Renderer &other)
+{
+	if (this != &other)
+	{
+		_model = other._model;
+		_shader = other._shader;
+		_materials = other._materials;
+		_textures = other._textures;
+		_camera = other._camera;
+		_polygonMode = other._polygonMode;
+		_rotationSpeed = other._rotationSpeed;
+		_zoomSpeed = other._zoomSpeed;
+	}
+	return *this;
 }
 
 void Renderer::render()
@@ -19,14 +35,6 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	_model.draw(_shader);
-	// for (uint32_t i = 0; i < _vertexArrayIDs.size(); ++i)
-	// {
-	// double timeValue = glfwGetTime();
-	// _shaders[i].use();
-	// _shaders[i].setUniform("rot", Matrix<4, 4>::createRotationMatrix(std::sin(timeValue) * 2 * M_PI, ZAxis));
-	// glBindVertexArray(_vertexArrayIDs[i]);
-	// glDrawArrays(GL_TRIANGLES, 0, 3);
-	// }
 }
 
 void Renderer::setPolygonMode(int polygonMode)
@@ -36,25 +44,44 @@ void Renderer::setPolygonMode(int polygonMode)
 	_polygonMode = polygonMode;
 }
 
-void Renderer::_init()
+Camera &Renderer::getCamera()
 {
-	_model.incrementRotation(M_PI_2, YAxis);
-	_model.incerementScale(0.8);
+	return _camera;
+}
+
+Model &Renderer::getModel()
+{
+	return _model;
+}
+
+float Renderer::getRotationSpeed() const
+{
+	return _rotationSpeed;
+}
+float Renderer::getZoomSpeed() const
+{
+	return _zoomSpeed;
+}
+
+void Renderer::updateModel()
+{
+	_shader.setUniform("model", _model.matrix());
+}
+
+void Renderer::init()
+{
+	// Setup model in scene
+	_model.incrementRotation(M_PI, YAxis);
+	_model.incerementScale(6);
+	_model.center();
+
+	// Setshader uniforms
 	_shader.use();
 	_shader.setUniform("proj", _camera.projectionMatrix());
 	_shader.setUniform("view", _camera.viewMatrix());
 	_shader.setUniform("model", _model.matrix());
-	// clang-format off
-	// float vertices[] = {
-	//     +0.5F, -0.5F, 0.0F,
-	// 	-0.5F, -0.5F, 0.0F,
-	// 	+0.0F, +0.5F, 0.0F,
-	// };
-	// uint32_t indices[] = {
-	//     0, 1, 3, 1, 2, 3,
-	// };
-	// clang-format on
 
+	// OpenGL parameters
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
 }

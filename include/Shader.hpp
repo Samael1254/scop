@@ -10,6 +10,9 @@ class Shader
 {
   public:
 	Shader(const std::string &vert, const std::string &frag);
+	Shader(const Shader &other);
+
+	Shader &operator=(const Shader &other);
 
 	uint32_t id() const;
 

@@ -5,18 +5,29 @@
 #include "Model.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
-#include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <glad/gl.h>
 #include <vector>
 
 class Renderer
 {
   public:
 	Renderer(int width, int height);
+	Renderer(const Renderer &other) = default;
 	~Renderer() = default;
 
+	Renderer &operator=(const Renderer &other);
+
+	void init();
 	void render();
+
 	void setPolygonMode(int polygonMode);
+	void updateModel();
+
+	Camera &getCamera();
+	Model  &getModel();
+	float   getRotationSpeed() const;
+	float   getZoomSpeed() const;
 
   private:
 	Model                 _model;
@@ -26,5 +37,6 @@ class Renderer
 	Camera                _camera;
 	int                   _polygonMode;
 
-	void _init();
+	float _rotationSpeed;
+	float _zoomSpeed;
 };

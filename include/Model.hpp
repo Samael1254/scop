@@ -11,6 +11,9 @@ class Model
 {
   public:
 	Model(const std::string &filepath);
+	Model(const Model &other);
+
+	Model &operator=(const Model &other);
 
 	void draw(const Shader &shader);
 
@@ -20,6 +23,9 @@ class Model
 	void incerementScale(float increment);
 	void rotate(const Vector<3> &rotator);
 	void incrementRotation(float angle, EAxis axis);
+	void translate(const Vector<3> &translator);
+	void incrementTranslation(float distance, EAxis axis);
+	void center();
 
   private:
 	Vector<3> _position;

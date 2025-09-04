@@ -5,16 +5,31 @@
 #include <cmath>
 
 Camera::Camera(int windowWidth, int windowHeight)
-    : _fov(M_PI_2), _near(1.0F), _far(100.0F),
-      _ratio(static_cast<float>(windowWidth) / static_cast<float>(windowHeight)), _position({0, 0, -3}),
+    : _fov(M_PI / 3), _near(1.0F), _far(100.0F),
+      _ratio(static_cast<float>(windowWidth) / static_cast<float>(windowHeight)), _position({0, 0, -5}),
       _direction({0, 0, -1}), _right(cross_product({0, 1, 0}, _direction)), _up(cross_product(_direction, _right))
 {
 }
 
+Camera &Camera::operator=(const Camera &other)
+{
+	if (this != &other)
+	{
+		_fov = other._fov;
+		_near = other._near;
+		_far = other._far;
+		_ratio = other._ratio;
+		_position = other._position;
+		_direction = other._direction;
+		_right = other._right;
+		_up = other._up;
+	}
+	return *this;
+}
 Matrix<4, 4> Camera::projectionMatrix() const
 {
 	Matrix<4, 4> proj = ::projection(_fov, _ratio, _near, _far);
-	std::cout << "Projection Matrix: " << proj << "\n";
+	// std::cout << "Projection Matrix: " << proj << "\n";
 	return proj;
 }
 
@@ -28,6 +43,6 @@ Matrix<4, 4> Camera::viewMatrix() const
 			view[j][i] = vectors[i][j];
 	view[3][3] = 1;
 
-	std::cout << "View Matrix: " << view << "\n";
+	// std::cout << "View Matrix: " << view << "\n";
 	return view;
 }

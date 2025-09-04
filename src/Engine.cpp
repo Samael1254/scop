@@ -1,17 +1,19 @@
 #include "Engine.hpp"
 #include "Renderer.hpp"
+#include "liblinal.hpp"
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
+#include <cmath>
 #include <exception>
 #include <iostream>
 #include <stdexcept>
 
-Engine::Engine(bool verbose) : _width(1000), _height(800), _window(nullptr), _verbose(verbose)
+Engine::Engine(bool verbose) : _width(1000), _height(800), _window(nullptr), _verbose(verbose) //_renderer(1000, 800),
 {
 	_init();
 }
 Engine::Engine(int width, int height, bool verbose)
-    : _width(width), _height(height), _window(nullptr), _verbose(verbose)
+    : _width(width), _height(height), _window(nullptr), _verbose(verbose) //_renderer(width, height),
 {
 	_init();
 }
@@ -54,6 +56,7 @@ void Engine::_createWindow()
 	}
 	glfwMakeContextCurrent(_window);
 	glfwSetFramebufferSizeCallback(_window, _frameBufferSizeCallback);
+	glfwSetScrollCallback(_window, &Engine::_mouseScrollCallback);
 }
 
 void Engine::_frameBufferSizeCallback(GLFWwindow *window, int width, int height)
@@ -87,12 +90,14 @@ void Engine::_close()
 
 void Engine::_renderLoop()
 {
+	// _renderer.init();
 	Renderer renderer(_width, _height);
+	glfwSetWindowUserPointer(_window, &renderer);
 
 	while (!glfwWindowShouldClose(_window))
 	{
 		// Input
-		_processInput();
+		_processInput(renderer);
 
 		// Rendering
 		try
@@ -110,8 +115,37 @@ void Engine::_renderLoop()
 	}
 }
 
-void Engine::_processInput()
+void Engine::_processInput(Renderer &renderer)
 {
 	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(_window, true);
+	if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
+		renderer.getModel().incrementRotation(renderer.getRotationSpeed(), YAxis);
+		renderer.updateModel();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		renderer.getModel().incrementRotation(-renderer.getRotationSpeed(), YAxis);
+		renderer.updateModel();
+	}
 }
+
+void Engine::_mouseScrollCallback(GLFWwindow *window, double xOffset, double yOffset)
+{
+	(void)xOffset;
+	Renderer *rendererAddr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
+	float     speed = yOffset == 1 ? 1 + rendererAddr->getZoomSpeed() : 1 - rendererAddr->getZoomSpeed();
+	rendererAddr->getModel().incerementScale(speed);
+	rendererAddr->updateModel();
+}
+
+// void Engine::_onScroll(float offset)
+// {
+// 	const float maxZoom = 100;
+// 	const float minZoom = 0.1;
+//
+// 	(void)maxZoom;
+// 	(void)minZoom;
+// 	// _renderer.getModel().incerementScale(offset * _zoomSpeed);
+// }
