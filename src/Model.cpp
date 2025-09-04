@@ -1,8 +1,8 @@
 #include "Model.hpp"
-#include "liblinal.hpp"
 #include "Matrix.hpp"
 #include "Shader.hpp"
 #include "Vector.hpp"
+#include "liblinal.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <cstdlib>
@@ -12,9 +12,10 @@
 #include <sys/types.h>
 #include <vector>
 
-Model::Model(const std::string &filepath)
+Model::Model(const std::string &filepath) : _scale({1, 1, 1})
 {
 	_loadModel(filepath);
+	// _position = {0.1, 0.2, 0};
 	_setup();
 	// for (unsigned int i = 0; i < _vertices.size(); i++)
 	// 	std::cout << _vertices[i] << " ";
@@ -36,9 +37,33 @@ Matrix<4, 4> Model::matrix() const
 {
 	Matrix<4, 4> model;
 	model = Matrix<4, 4>::createTranslationMatrix(_position);
-	model = model * Matrix<4, 4>::createRotationMatrix(_rotation.x(), XAxis);
+	for (unsigned int i = 0; i < 3; ++i)
+		if (_rotation[i] != 0)
+			model = model * Matrix<4, 4>::createRotationMatrix(_rotation[i], static_cast<EAxis>(i));
+	// model = model * Matrix<4, 4>::createRotationMatrix(_rotation.z(), ZAxis);
 	model = model * Matrix<4, 4>::createScalingMatrix({_scale.x(), _scale.y(), _scale.z(), 1});
+	std::cout << "Model Matrix: " << model << "\n";
 	return model;
+}
+
+void Model::scale(float scale)
+{
+	_scale = {scale, scale, scale};
+}
+
+void Model::incerementScale(float increment)
+{
+	_scale *= increment;
+}
+
+void Model::rotate(const Vector<3> &rotator)
+{
+	_rotation = rotator;
+}
+
+void Model::incrementRotation(float angle, EAxis axis)
+{
+	_rotation[axis] += angle;
 }
 
 void Model::_loadModel(const std::string &filepath)

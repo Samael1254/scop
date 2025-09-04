@@ -1,8 +1,8 @@
 #include "Engine.hpp"
 #include "Renderer.hpp"
-#include <exception>
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
+#include <exception>
 #include <iostream>
 #include <stdexcept>
 

@@ -1,14 +1,14 @@
 #include "Renderer.hpp"
-#include "liblinal.hpp"
 #include "Shader.hpp"
-#include <cmath>
+#include "liblinal.hpp"
 #include <GLFW/glfw3.h>
+#include <cmath>
 #include <stdexcept>
 #include <string>
 
 Renderer::Renderer(int width, int height)
     : _model(Model("resources/42.obj")), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
-      _camera(width, height), _polygonMode(GL_FILL)
+      _camera(width, height), _polygonMode(GL_LINE)
 {
 	_init();
 }
@@ -38,6 +38,8 @@ void Renderer::setPolygonMode(int polygonMode)
 
 void Renderer::_init()
 {
+	_model.incrementRotation(M_PI_2, YAxis);
+	_model.incerementScale(0.8);
 	_shader.use();
 	_shader.setUniform("proj", _camera.projectionMatrix());
 	_shader.setUniform("view", _camera.viewMatrix());

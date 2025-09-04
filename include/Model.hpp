@@ -2,6 +2,7 @@
 
 #include "Shader.hpp"
 #include "Vector.hpp"
+#include "liblinal.hpp"
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -11,8 +12,14 @@ class Model
   public:
 	Model(const std::string &filepath);
 
-	void         draw(const Shader &shader);
+	void draw(const Shader &shader);
+
 	Matrix<4, 4> matrix() const;
+
+	void scale(float scale);
+	void incerementScale(float increment);
+	void rotate(const Vector<3> &rotator);
+	void incrementRotation(float angle, EAxis axis);
 
   private:
 	Vector<3> _position;
