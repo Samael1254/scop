@@ -8,7 +8,7 @@
 
 Renderer::Renderer(int width, int height)
     : _model(Model("./resources/marble_bust.obj")), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
-      _camera(width, height), _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
+      _camera(width, height), _polygonMode(GL_FILL), _rotationSpeed(0.03), _zoomSpeed(0.1)
 {
 	init();
 }
@@ -37,11 +37,24 @@ void Renderer::render()
 	_model.draw(_shader);
 }
 
-void Renderer::setPolygonMode(int polygonMode)
+void Renderer::switchPolygonMode()
 {
-	if (polygonMode != GL_FILL || polygonMode != GL_LINE || polygonMode != GL_POINT)
+	switch (_polygonMode)
+	{
+	case GL_POINT:
+		_polygonMode = GL_LINE;
+		break;
+	case GL_LINE:
+		_polygonMode = GL_FILL;
+		break;
+	case GL_FILL:
+		_polygonMode = GL_POINT;
+		break;
+	default:
 		throw std::logic_error("invalid polygon mode");
-	_polygonMode = polygonMode;
+		break;
+	}
+	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
 }
 
 Camera &Renderer::getCamera()

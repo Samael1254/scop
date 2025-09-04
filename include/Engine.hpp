@@ -32,5 +32,5 @@ class Engine
 	void        _renderLoop();
 	void        _processInput(Renderer &renderer);
 	static void _mouseScrollCallback(GLFWwindow *window, double xOffset, double yOffset);
-	// void        _onScroll(float offset);
+	static void _keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 };

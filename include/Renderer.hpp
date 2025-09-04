@@ -21,7 +21,7 @@ class Renderer
 	void init();
 	void render();
 
-	void setPolygonMode(int polygonMode);
+	void switchPolygonMode();
 	void updateModel();
 
 	Camera &getCamera();

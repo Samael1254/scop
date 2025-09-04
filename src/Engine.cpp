@@ -57,6 +57,7 @@ void Engine::_createWindow()
 	glfwMakeContextCurrent(_window);
 	glfwSetFramebufferSizeCallback(_window, _frameBufferSizeCallback);
 	glfwSetScrollCallback(_window, &Engine::_mouseScrollCallback);
+	glfwSetKeyCallback(_window, _keyCallback);
 }
 
 void Engine::_frameBufferSizeCallback(GLFWwindow *window, int width, int height)
@@ -140,12 +141,11 @@ void Engine::_mouseScrollCallback(GLFWwindow *window, double xOffset, double yOf
 	rendererAddr->updateModel();
 }
 
-// void Engine::_onScroll(float offset)
-// {
-// 	const float maxZoom = 100;
-// 	const float minZoom = 0.1;
-//
-// 	(void)maxZoom;
-// 	(void)minZoom;
-// 	// _renderer.getModel().incerementScale(offset * _zoomSpeed);
-// }
+void Engine::_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+	(void)scancode;
+	(void)mods;
+	Renderer *rendererAddr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+		rendererAddr->switchPolygonMode();
+}
