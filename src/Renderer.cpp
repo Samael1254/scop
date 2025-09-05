@@ -71,6 +71,7 @@ float Renderer::getRotationSpeed() const
 {
 	return _rotationSpeed;
 }
+
 float Renderer::getZoomSpeed() const
 {
 	return _zoomSpeed;
@@ -85,8 +86,9 @@ void Renderer::init()
 {
 	// Setup model in scene
 	_model.incrementRotation(M_PI, YAxis);
-	_model.incrementScale(6);
-	_model.center();
+	_model.incrementScale(1);
+
+	// _model.center();
 
 	// Setshader uniforms
 	_shader.use();

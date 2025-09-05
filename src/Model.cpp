@@ -3,10 +3,8 @@
 #include "Shader.hpp"
 #include "Vector.hpp"
 #include "liblinal.hpp"
-#include <algorithm>
 #include <array>
 #include <cstdint>
-#include <cstdlib>
 #include <fstream>
 #include <functional>
 #include <stdexcept>
@@ -18,6 +16,7 @@
 Model::Model(const std::string &filepath) : _scale({1, 1, 1})
 {
 	_loadModel(filepath);
+	_center();
 	_setup();
 }
 
@@ -72,7 +71,6 @@ void Model::scale(float scale)
 void Model::incrementScale(float increment)
 {
 	_scale *= increment;
-	center();
 }
 
 void Model::rotate(const Vector<3> &rotator)
@@ -95,24 +93,28 @@ void Model::incrementTranslation(float distance, EAxis axis)
 	_position[axis] += distance;
 }
 
-void Model::center()
+void Model::_center()
 {
-	if (_vs.size() == 0)
+	if (_vs.empty())
 		return;
 
-	Vector<3> max = Matrix<3, 3>::createScalingMatrix(_scale) * _vs[0];
+	Vector<3> max = _vs[0];
 	Vector<3> min = max;
 	for (unsigned int i = 1; i < _vs.size(); ++i)
 	{
 		for (unsigned int j = 0; j < 3; ++j)
 		{
-			max[j] = std::max(_vs[i][j] * _scale[j], max[j]);
-			min[j] = std::min(_vs[i][j] * _scale[j], min[j]);
+			max[j] = std::max(_vs[i][j], max[j]);
+			min[j] = std::min(_vs[i][j], min[j]);
 		}
 	}
-
 	Vector<3> center = (min + max) * 0.5;
-	_position = -1 * center;
+	for (unsigned int i = 0; i < _vertexBuffer.size(); i += 8)
+	{
+		_vertexBuffer[i] -= center[0];
+		_vertexBuffer[i + 1] -= center[1];
+		_vertexBuffer[i + 2] -= center[2];
+	}
 }
 
 void Model::_loadModel(const std::string &filepath)

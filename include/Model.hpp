@@ -27,7 +27,6 @@ class Model
 	void incrementRotation(float angle, EAxis axis);
 	void translate(const Vector<3> &translator);
 	void incrementTranslation(float distance, EAxis axis);
-	void center();
 
   private:
 	Vector<3> _position;
@@ -60,5 +59,6 @@ class Model
 	static std::string _getNextWord(std::string &line, const std::string &separators);
 	static Vector<3>   _computeNormal(const std::array<Vector<3>, 3> &vertices);
 
+	void _center();
 	void _setup();
 };
