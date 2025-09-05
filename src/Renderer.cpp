@@ -7,8 +7,8 @@
 #include <string>
 
 Renderer::Renderer(int width, int height)
-    : _model(Model("./resources/marble_bust.obj")), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
-      _camera(width, height), _polygonMode(GL_FILL), _rotationSpeed(0.03), _zoomSpeed(0.1)
+    : _model(Model("./resources/42.obj")), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
+      _camera(width, height), _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
 {
 	init();
 }
@@ -85,7 +85,7 @@ void Renderer::init()
 {
 	// Setup model in scene
 	_model.incrementRotation(M_PI, YAxis);
-	_model.incerementScale(6);
+	_model.incrementScale(6);
 	_model.center();
 
 	// Setshader uniforms

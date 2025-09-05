@@ -137,7 +137,7 @@ void Engine::_mouseScrollCallback(GLFWwindow *window, double xOffset, double yOf
 	(void)xOffset;
 	Renderer *rendererAddr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
 	float     speed = yOffset == 1 ? 1 + rendererAddr->getZoomSpeed() : 1 - rendererAddr->getZoomSpeed();
-	rendererAddr->getModel().incerementScale(speed);
+	rendererAddr->getModel().incrementScale(speed);
 	rendererAddr->updateModel();
 }
 

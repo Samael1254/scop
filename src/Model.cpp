@@ -4,23 +4,21 @@
 #include "Vector.hpp"
 #include "liblinal.hpp"
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <cstdlib>
 #include <fstream>
+#include <functional>
+#include <stdexcept>
 #include <string>
 #include <sys/types.h>
+#include <unordered_map>
 #include <vector>
 
 Model::Model(const std::string &filepath) : _scale({1, 1, 1})
 {
 	_loadModel(filepath);
 	_setup();
-	// for (unsigned int i = 0; i < _vertices.size(); i++)
-	// 	std::cout << _vertices[i] << " ";
-	// std::cout << "\n ";
-	// for (unsigned int i = 0; i < _indices.size(); i++)
-	// 	std::cout << _indices[i] << " ";
-	// std::cout << "\n ";
 }
 
 Model::Model(const Model &other)
@@ -38,9 +36,8 @@ Model &Model::operator=(const Model &other)
 		_vs = other._vs;
 		_vns = other._vns;
 		_vts = other._vts;
-		_fs = other._fs;
-		_indices = other._indices;
-		_vertices = other._vertices;
+		_elementBuffer = other._elementBuffer;
+		_vertexBuffer = other._vertexBuffer;
 		_vertexArrayID = other._vertexArrayID;
 		_vertexBufferID = other._vertexBufferID;
 		_elementBufferID = other._elementBufferID;
@@ -52,7 +49,7 @@ void Model::draw(const Shader &shader)
 {
 	shader.use();
 	glBindVertexArray(_vertexArrayID);
-	glDrawElements(GL_TRIANGLES, static_cast<int>(_indices.size()), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, static_cast<int>(_elementBuffer.size()), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 
@@ -72,7 +69,7 @@ void Model::scale(float scale)
 	_scale = {scale, scale, scale};
 }
 
-void Model::incerementScale(float increment)
+void Model::incrementScale(float increment)
 {
 	_scale *= increment;
 	center();
@@ -125,7 +122,7 @@ void Model::_loadModel(const std::string &filepath)
 		throw std::runtime_error("failed to open .obj file: " + filepath);
 
 	std::string              buf;
-	std::vector<std::string> validTypes = {"v", "vs", "vt", "f"};
+	std::vector<std::string> validTypes = {"v", "vt", "vn", "f"};
 	while (std::getline(is, buf))
 	{
 		std::string type = _getNextWord(buf);
@@ -134,20 +131,23 @@ void Model::_loadModel(const std::string &filepath)
 
 		if (type == "v")
 			_vs.push_back(_readVector3(buf));
-		else if (type == "vn")
-			_vns.push_back(_readVector3(buf));
 		else if (type == "vt")
 			_vts.push_back(_readVector2(buf));
+		else if (type == "vn")
+			_vns.push_back(_readVector3(buf));
 		else if (type == "f")
 			_readFace(buf);
 	}
-	// for (unsigned int i = 0; i < _fs.size(); i++)
-	// 	std::cout << _fs[i][0] << " " << _fs[i][1] << " " << _fs[i][2] << "\n";
 }
 
 std::string Model::_getNextWord(std::string &line)
 {
-	unsigned long end = line.find(' ');
+	return _getNextWord(line, " \t");
+}
+
+std::string Model::_getNextWord(std::string &line, const std::string &separators)
+{
+	unsigned long end = line.find_first_of(separators);
 	if (end == std::string::npos)
 	{
 		std::string word = line;
@@ -155,7 +155,7 @@ std::string Model::_getNextWord(std::string &line)
 		return word;
 	}
 	std::string word = line.substr(0, end);
-	line = line.substr(line.find_first_not_of(" \t", end), line.length() - end);
+	line = line.substr(line.find_first_not_of(separators, end), line.length() - end);
 	return word;
 }
 
@@ -179,34 +179,113 @@ Vector<2> Model::_readVector2(std::string &data)
 
 void Model::_readFace(std::string &data)
 {
-	std::vector<uint32_t> indices;
+	std::vector<std::array<int32_t, 3>> indices;
 
+	std::vector<std::string> lineData;
 	while (!data.empty())
-		indices.push_back(std::atoi(_getNextWord(data).c_str()));
-	if (indices.size() == 3)
+		lineData.push_back(_getNextWord(data));
+	if (lineData.size() < 3)
+		throw std::runtime_error("face has less than three vertices in line:\n" + data);
+	if (lineData.size() > 3)
+		_triangulateFace(lineData);
+	for (unsigned int i = 0; i < lineData.size() / 3; ++i)
 	{
-		Vector<3, uint32_t> face;
-		for (int i = 0; i < 3; ++i)
-			face[i] = indices[i];
-		_fs.push_back(face);
-		return;
+		std::array<VertexIndices, 3> vis;
+		std::array<Vector<3>, 3>     positions;
+		for (unsigned int j = 0; j < 3; ++j)
+		{
+			vis[j] = _readVertexIndices(lineData[3 * i + j]);
+			positions[j] = _vs[vis[j].positionID];
+		}
+		Vector<3> faceNormals;
+		bool      hasNormal = vis[0].normalID != -1 && vis[1].normalID != -1 && vis[2].normalID != -1;
+		if (!hasNormal)
+			faceNormals = _computeNormal(positions);
+		for (unsigned int j = 0; j < 3; ++j)
+		{
+			std::unordered_map<VertexIndices, uint64_t, std::hash<VertexIndices>>::iterator it =
+			    _indicesMap.find(vis[j]);
+			if (it != _indicesMap.end())
+			{
+				_elementBuffer.push_back(it->second);
+				continue;
+			}
+			uint32_t index = static_cast<uint32_t>(_indicesMap.size());
+			_indicesMap.emplace(vis[j], index);
+			_elementBuffer.push_back(index);
+			if (!hasNormal)
+				_createVertex(vis[j], faceNormals);
+			else
+				_createVertex(vis[j], _vns[vis[j].normalID]);
+		}
 	}
-	std::vector<Vector<3, uint32_t>> faces = _triangulateFace(indices);
-	_fs.insert(_fs.end(), faces.begin(), faces.end());
 }
 
-std::vector<Vector<3, uint32_t>> Model::_triangulateFace(const std::vector<uint32_t> &indices)
+void Model::_triangulateFace(std::vector<std::string> &lineData)
 {
-	std::vector<Vector<3, uint32_t>> faces;
-	for (uint32_t i = 0; i < indices.size() - 2; ++i)
+	std::vector<std::string> trLineData;
+	for (uint32_t i = 0; i < lineData.size() - 2; ++i)
 	{
-		Vector<3, uint32_t> face;
-		face[0] = indices[0];
-		face[1] = indices[i + 1];
-		face[2] = indices[i + 2];
-		faces.push_back(face);
+		trLineData.push_back(lineData[0]);
+		trLineData.push_back(lineData[i + 1]);
+		trLineData.push_back(lineData[i + 2]);
 	}
-	return faces;
+	lineData = trLineData;
+}
+
+VertexIndices Model::_readVertexIndices(const std::string &data)
+{
+	VertexIndices vi(_readVertexIndex(data, _vs));
+
+	unsigned long firstSlash = data.find('/');
+	if (firstSlash == std::string::npos)
+		return vi;
+	unsigned long secondSlash = data.find('/', firstSlash + 1);
+	if (secondSlash > firstSlash + 1)
+		vi.textureID = _readVertexIndex(data.substr(firstSlash + 1), _vts);
+	if (secondSlash == std::string::npos)
+		return vi;
+	vi.normalID = _readVertexIndex(data.substr(secondSlash + 1), _vns);
+	return vi;
+}
+
+template <unsigned int N>
+int Model::_readVertexIndex(const std::string &data, const std::vector<Vector<N>> &vec)
+{
+	int index = std::atoi(data.c_str());
+	if (index < 0)
+		index = static_cast<int>(vec.size()) + index;
+	else
+		index -= 1;
+
+	if (index < 0 || index >= static_cast<int>(vec.size()))
+		throw std::out_of_range("OBJ index out of range");
+
+	return index;
+}
+
+void Model::_createVertex(const VertexIndices &vi, Vector<3> normal)
+{
+	for (unsigned int i = 0; i < 3; ++i)
+		_vertexBuffer.push_back(_vs[vi.positionID][i]);
+	if (vi.textureID == -1)
+	{
+		_vertexBuffer.push_back(0.0F);
+		_vertexBuffer.push_back(0.0F);
+	}
+	else
+		for (unsigned int i = 0; i < 2; ++i)
+			_vertexBuffer.push_back(_vts[vi.textureID][i]);
+	for (unsigned int i = 0; i < 3; ++i)
+		_vertexBuffer.push_back(normal[i]);
+}
+
+Vector<3> Model::_computeNormal(const std::array<Vector<3>, 3> &vertices)
+{
+	Vector<3> normal;
+	(void)vertices;
+
+	return normal;
 }
 
 void Model::_setup()
@@ -219,32 +298,14 @@ void Model::_setup()
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBufferID);
 
-	_indices = _createIndices();
-	_vertices = _createVertices();
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _vertexBuffer.size(), _vertexBuffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * _elementBuffer.size(), _elementBuffer.data(),
+	             GL_STATIC_DRAW);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * _indices.size(), _indices.data(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
 	glEnableVertexAttribArray(0);
-	// glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
-	// glEnableVertexAttribArray(1);
-}
-
-std::vector<uint32_t> Model::_createIndices()
-{
-	std::vector<uint32_t> indices;
-	for (uint32_t i = 0; i < _fs.size(); ++i)
-		for (uint32_t j = 0; j < 3; ++j)
-			indices.push_back(_fs[i][j] - 1);
-	return indices;
-}
-
-std::vector<float> Model::_createVertices()
-{
-	std::vector<float> vertices;
-	for (uint32_t i = 0; i < _vs.size(); ++i)
-		for (uint32_t j = 0; j < 3; ++j)
-			vertices.push_back(_vs[i][j]);
-	return vertices;
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, 8 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 3, GL_FLOAT, false, 8 * sizeof(float), reinterpret_cast<void *>(5 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 }

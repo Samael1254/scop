@@ -2,7 +2,7 @@
 #include <exception>
 #include <iostream>
 
-int main(void)
+int main()
 {
 	try
 	{
