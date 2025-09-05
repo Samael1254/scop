@@ -92,7 +92,6 @@ void Engine::_close()
 
 void Engine::_renderLoop(Model &model)
 {
-	// _renderer.init();
 	Renderer renderer(_width, _height, model);
 	glfwSetWindowUserPointer(_window, &renderer);
 

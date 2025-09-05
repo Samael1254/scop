@@ -283,7 +283,9 @@ void Model::_createVertex(const VertexIndices &vi, Vector<3> normal)
 Vector<3> Model::_computeNormal(const std::array<Vector<3>, 3> &vertices)
 {
 	Vector<3> normal;
-	(void)vertices;
+	Vector<3> ab = vertices[1] - vertices[0];
+	Vector<3> bc = vertices[2] - vertices[1];
+	normal = cross_product(ab, bc).normalized();
 
 	return normal;
 }
