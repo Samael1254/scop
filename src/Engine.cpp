@@ -8,12 +8,13 @@
 #include <iostream>
 #include <stdexcept>
 
-Engine::Engine(bool verbose) : _width(1000), _height(800), _window(nullptr), _verbose(verbose) //_renderer(1000, 800),
+Engine::Engine(bool verbose) : _width(1000), _height(800), _window(nullptr), _verbose(verbose)
 {
 	_init();
 }
+
 Engine::Engine(int width, int height, bool verbose)
-    : _width(width), _height(height), _window(nullptr), _verbose(verbose) //_renderer(width, height),
+    : _width(width), _height(height), _window(nullptr), _verbose(verbose)
 {
 	_init();
 }
@@ -23,9 +24,9 @@ Engine::~Engine()
 	_close();
 }
 
-void Engine::run()
+void Engine::render(Model &model)
 {
-	_renderLoop();
+	_renderLoop(model);
 }
 
 void Engine::_init()
@@ -89,10 +90,10 @@ void Engine::_close()
 		std::cout << "Terminate GLFW and OpenGL\n";
 }
 
-void Engine::_renderLoop()
+void Engine::_renderLoop(Model &model)
 {
 	// _renderer.init();
-	Renderer renderer(_width, _height);
+	Renderer renderer(_width, _height, model);
 	glfwSetWindowUserPointer(_window, &renderer);
 
 	while (!glfwWindowShouldClose(_window))

@@ -12,7 +12,7 @@
 class Renderer
 {
   public:
-	Renderer(int width, int height);
+	Renderer(int width, int height, Model &model);
 	Renderer(const Renderer &other) = default;
 	~Renderer() = default;
 

@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Model.hpp"
 #include "Renderer.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
-#include <optional>
 
 class Engine
 {
@@ -12,7 +12,7 @@ class Engine
 	Engine(int width, int height, bool verbose = false);
 	~Engine();
 
-	void run();
+	void render(Model &model);
 
   private:
 	int         _width;
@@ -29,7 +29,7 @@ class Engine
 
 	void _close();
 
-	void        _renderLoop();
+	void        _renderLoop(Model &model);
 	void        _processInput(Renderer &renderer);
 	static void _mouseScrollCallback(GLFWwindow *window, double xOffset, double yOffset);
 	static void _keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);

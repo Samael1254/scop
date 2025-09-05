@@ -6,9 +6,9 @@
 #include <stdexcept>
 #include <string>
 
-Renderer::Renderer(int width, int height)
-    : _model(Model("./resources/42.obj")), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
-      _camera(width, height), _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
+Renderer::Renderer(int width, int height, Model &model)
+    : _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")), _camera(width, height),
+      _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
 {
 	init();
 }
