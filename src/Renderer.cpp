@@ -1,4 +1,5 @@
 #include "Renderer.hpp"
+#include "Material.hpp"
 #include "Shader.hpp"
 #include "liblinal.hpp"
 #include <GLFW/glfw3.h>
@@ -8,8 +9,9 @@
 
 Renderer::Renderer(int width, int height, Model &model)
     : _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")), _camera(width, height),
-      _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
+      _light(Light(-1 * _camera.getPosition())), _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
 {
+	_materials.push_back(Material());
 	init();
 }
 
@@ -95,6 +97,10 @@ void Renderer::init()
 	_shader.setUniform("proj", _camera.projectionMatrix());
 	_shader.setUniform("view", _camera.viewMatrix());
 	_shader.setUniform("model", _model.matrix());
+	_shader.setUniform("lightColor", _light.getColor());
+	_shader.setUniform("lightPosition", _light.getPosition());
+	_shader.setUniform("lightBrightness", _light.getBrightness());
+	_shader.setUniform("diffuseColor", _model.getMaterial().getDiffuse());
 
 	// OpenGL parameters
 	glEnable(GL_DEPTH_TEST);

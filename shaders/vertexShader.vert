@@ -10,10 +10,12 @@ uniform mat4x4 model;
 
 out vec3 normal;
 out vec2 texture;
+out vec3 FragPos;
 
 void main()
 {
     gl_Position = proj * view * model * vec4(aPos, 1.0);
     normal = aNormal;
     texture = aTexture;
+    FragPos = vec3(model * vec4(aPos, 1.));
 }

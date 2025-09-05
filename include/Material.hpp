@@ -7,8 +7,11 @@ class Material
   public:
 	Material();
 
+	const Vector<3> &getDiffuse() const;
+	const Vector<3> &getAmbient() const;
+
   private:
-	Vector<4> _diffuse;
-	Vector<4> _ambient;
+	Vector<3> _diffuse;
+	Vector<3> _ambient;
 	int16_t   _textureID;
 };

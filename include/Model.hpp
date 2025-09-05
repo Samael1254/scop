@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Material.hpp"
 #include "Shader.hpp"
 #include "Vector.hpp"
 #include "VertexIndices.hpp"
@@ -28,10 +29,14 @@ class Model
 	void translate(const Vector<3> &translator);
 	void incrementTranslation(float distance, EAxis axis);
 
+	const Material &getMaterial() const;
+	void            setMaterial(Material &material);
+
   private:
 	Vector<3> _position;
 	Vector<3> _rotation;
 	Vector<3> _scale;
+	Material  _material;
 
 	std::vector<Vector<3>> _vs;
 	std::vector<Vector<3>> _vns;

@@ -12,6 +12,8 @@ class Camera
 	Matrix<4, 4> projectionMatrix() const;
 	Matrix<4, 4> viewMatrix() const;
 
+	const Vector<3> &getPosition() const;
+
   private:
 	float _fov;
 	float _near;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera.hpp"
+#include "Light.hpp"
 #include "Material.hpp"
 #include "Model.hpp"
 #include "Shader.hpp"
@@ -34,9 +35,11 @@ class Renderer
 	Shader                _shader;
 	std::vector<Material> _materials;
 	std::vector<Texture>  _textures;
-	Camera                _camera;
-	int                   _polygonMode;
 
+	Camera _camera;
+	Light  _light;
+
+	int   _polygonMode;
 	float _rotationSpeed;
 	float _zoomSpeed;
 };

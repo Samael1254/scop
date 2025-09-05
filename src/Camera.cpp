@@ -29,7 +29,6 @@ Camera &Camera::operator=(const Camera &other)
 Matrix<4, 4> Camera::projectionMatrix() const
 {
 	Matrix<4, 4> proj = ::projection(_fov, _ratio, _near, _far);
-	// std::cout << "Projection Matrix: " << proj << "\n";
 	return proj;
 }
 
@@ -43,6 +42,10 @@ Matrix<4, 4> Camera::viewMatrix() const
 			view[j][i] = vectors[i][j];
 	view[3][3] = 1;
 
-	// std::cout << "View Matrix: " << view << "\n";
 	return view;
+}
+
+const Vector<3> &Camera::getPosition() const
+{
+	return _position;
 }

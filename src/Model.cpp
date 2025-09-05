@@ -32,6 +32,7 @@ Model &Model::operator=(const Model &other)
 		_scale = other._scale;
 		_position = other._position;
 		_rotation = other._rotation;
+		_material = other._material;
 		_vs = other._vs;
 		_vns = other._vns;
 		_vts = other._vts;
@@ -91,6 +92,16 @@ void Model::translate(const Vector<3> &translator)
 void Model::incrementTranslation(float distance, EAxis axis)
 {
 	_position[axis] += distance;
+}
+
+const Material &Model::getMaterial() const
+{
+	return _material;
+}
+
+void Model::setMaterial(Material &material)
+{
+	_material = material;
 }
 
 void Model::_center()
