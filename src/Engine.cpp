@@ -131,6 +131,16 @@ void Engine::_processInput(Renderer &renderer)
 		renderer.getModel().incrementRotation(-renderer.getRotationSpeed(), YAxis);
 		renderer.updateModel();
 	}
+	if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		renderer.getModel().incrementRotation(renderer.getRotationSpeed(), XAxis);
+		renderer.updateModel();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		renderer.getModel().incrementRotation(-renderer.getRotationSpeed(), XAxis);
+		renderer.updateModel();
+	}
 }
 
 void Engine::_mouseScrollCallback(GLFWwindow *window, double xOffset, double yOffset)
