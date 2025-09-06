@@ -6,8 +6,8 @@
 #include "Model.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
-#include <GLFW/glfw3.h>
 #include <glad/gl.h>
+#include <GLFW/glfw3.h>
 #include <vector>
 
 class Renderer
@@ -22,8 +22,9 @@ class Renderer
 	void init();
 	void render();
 
-	void switchPolygonMode();
-	void updateModel();
+	void        switchPolygonMode();
+	static void toggleAntialiasing();
+	void        updateModel();
 
 	Camera &getCamera();
 	Model  &getModel();

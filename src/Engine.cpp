@@ -1,10 +1,10 @@
 #include "Engine.hpp"
-#include "Renderer.hpp"
 #include "liblinal.hpp"
-#include <GL/gl.h>
-#include <GLFW/glfw3.h>
+#include "Renderer.hpp"
 #include <cmath>
 #include <exception>
+#include <GL/gl.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -43,6 +43,7 @@ void Engine::_initGLFW() const
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 	if (_verbose)
 		std::cout << "Loaded GLFW" << "\n";
 }
@@ -148,4 +149,6 @@ void Engine::_keyCallback(GLFWwindow *window, int key, int scancode, int action,
 	Renderer *rendererAddr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 		rendererAddr->switchPolygonMode();
+	if (key == GLFW_KEY_A && action == GLFW_PRESS)
+		Renderer::toggleAntialiasing();
 }

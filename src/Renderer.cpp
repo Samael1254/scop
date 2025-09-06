@@ -1,9 +1,9 @@
 #include "Renderer.hpp"
+#include "liblinal.hpp"
 #include "Material.hpp"
 #include "Shader.hpp"
-#include "liblinal.hpp"
-#include <GLFW/glfw3.h>
 #include <cmath>
+#include <GLFW/glfw3.h>
 #include <stdexcept>
 #include <string>
 
@@ -59,6 +59,19 @@ void Renderer::switchPolygonMode()
 	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
 }
 
+void Renderer::toggleAntialiasing()
+{
+	if (glIsEnabled(GL_MULTISAMPLE))
+	{
+		// glfwWindowHint(GLFW_SAMPLES, 0);
+		glDisable(GL_MULTISAMPLE);
+	}
+	else
+	{
+		glEnable(GL_MULTISAMPLE);
+	}
+}
+
 Camera &Renderer::getCamera()
 {
 	return _camera;
@@ -88,7 +101,7 @@ void Renderer::init()
 {
 	// Setup model in scene
 	_model.incrementRotation(M_PI, YAxis);
-	_model.incrementScale(1);
+	_model.incrementScale(5);
 
 	// _model.center();
 
@@ -104,5 +117,6 @@ void Renderer::init()
 
 	// OpenGL parameters
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_MULTISAMPLE);
 	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
 }
