@@ -7,18 +7,16 @@ layout(location = 2) in vec3 aNormal;
 uniform mat4x4 proj;
 uniform mat4x4 view;
 uniform mat4x4 model;
+uniform mat3x3 normal;
 
-out vec3 normal;
+out vec3 normalVec;
 out vec2 texture;
 out vec3 FragPos;
 
 void main()
 {
     gl_Position = proj * view * model * vec4(aPos, 1.0);
-    mat3x3 normalMat = mat3(transpose(inverse(view * model)));
-    normalMat = mat3(transpose(inverse(model)));
-    normal = normalize(normalMat * aNormal);
-    // normal = aNormal;
+    normalVec = normalize(normal * aNormal);
     texture = aTexture;
     FragPos = vec3(model * vec4(aPos, 1.));
 }

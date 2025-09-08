@@ -3,6 +3,7 @@
 #include "Camera.hpp"
 #include "Light.hpp"
 #include "Material.hpp"
+#include "Matrix.hpp"
 #include "Model.hpp"
 #include "PointLight.hpp"
 #include "Shader.hpp"
@@ -27,8 +28,7 @@ class Renderer
 	static void toggleAntialiasing();
 	void        updateModel();
 	void        updateLight();
-
-	void resize(int width, int height);
+	void        resize(int width, int height);
 
 	Camera     &getCamera();
 	Model      &getModel();
@@ -50,4 +50,6 @@ class Renderer
 	int   _polygonMode;
 	float _rotationSpeed;
 	float _zoomSpeed;
+
+	static Matrix<3, 3> _normalMatrix(const Matrix<4, 4> &modelMatrix, const Matrix<4, 4> &viewMatrix);
 };

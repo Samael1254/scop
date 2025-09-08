@@ -1,6 +1,6 @@
 #version 460 core
 
-in vec3 normal;
+in vec3 normalVec;
 in vec2 texture;
 in vec3 FragPos;
 
@@ -16,8 +16,9 @@ uniform vec3 diffuseColor;
 void main()
 {
     vec3 lightDir = normalize(lightPos - FragPos);
-    float incidence = max(dot(lightDir, normal), 0.);
+    float incidence = max(dot(lightDir, normalVec), 0.);
     vec3 ambiant = ambiantBrightness * ambiantColor;
     vec3 diffuse = incidence * lightBrightness * lightColor;
     FragColor = vec4((ambiant + diffuse) * diffuseColor, 1.0);
+    // FragColor = vec4(normalVec, 1.0);
 }

@@ -1,18 +1,20 @@
 #include "Renderer.hpp"
 #include "Material.hpp"
+#include "Matrix.hpp"
 #include "PointLight.hpp"
 #include "Shader.hpp"
 #include "Vector.hpp"
 #include "liblinal.hpp"
 #include <GLFW/glfw3.h>
 #include <cmath>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 
 Renderer::Renderer(int width, int height, Model &model)
     : _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")), _camera(width, height),
       _light(PointLight(_camera.getPosition(), Vector<3>{1, 1, 1}, 1)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
-      _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
+      _polygonMode(GL_FILL), _rotationSpeed(0.03), _zoomSpeed(0.1)
 {
 	_materials.push_back(Material());
 	init();
@@ -107,7 +109,12 @@ float Renderer::getZoomSpeed() const
 
 void Renderer::updateModel()
 {
-	_shader.setUniform("model", _model.matrix());
+	Matrix<4, 4> model = _model.matrix();
+	Matrix<4, 4> view = _camera.viewMatrix();
+	Matrix<3, 3> normal = _normalMatrix(model, view);
+
+	_shader.setUniform("model", model);
+	_shader.setUniform("normal", normal);
 }
 
 void Renderer::updateLight()
@@ -128,9 +135,14 @@ void Renderer::init()
 
 	// Setshader uniforms
 	_shader.use();
+	Matrix<4, 4> model = _model.matrix();
+	Matrix<4, 4> view = _camera.viewMatrix();
+	Matrix<3, 3> normal = _normalMatrix(model, view);
+
 	_shader.setUniform("proj", _camera.projectionMatrix());
-	_shader.setUniform("view", _camera.viewMatrix());
-	_shader.setUniform("model", _model.matrix());
+	_shader.setUniform("view", view);
+	_shader.setUniform("model", model);
+	_shader.setUniform("normal", normal);
 	_shader.setUniform("lightColor", _light.getColor());
 	_shader.setUniform("lightPos", _light.getPosition());
 	_shader.setUniform("lightBrightness", _light.getBrightness());
@@ -142,4 +154,13 @@ void Renderer::init()
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_MULTISAMPLE);
 	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
+}
+
+Matrix<3, 3> Renderer::_normalMatrix(const Matrix<4, 4> &modelMatrix, const Matrix<4, 4> &viewMatrix)
+{
+	Matrix<4, 4> normal4 = viewMatrix.mul_mat(modelMatrix);
+	normal4.inverse();
+	normal4.transpose();
+	Matrix<3, 3> normal = normal4.resize<3, 3>(false);
+	return normal;
 }

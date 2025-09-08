@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <fstream>
 #include <functional>
-#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <sys/types.h>
@@ -300,6 +299,9 @@ int Model::_readVertexIndex(const std::string &data, const std::vector<Vector<N>
 
 void Model::_createVertex(const VertexIndices &vi, Vector<3> normal)
 {
+	// normal *= -1;
+	// normal[0] *= -1;
+	// normal[2] *= -1;
 	for (unsigned int i = 0; i < 3; ++i)
 		_vertexBuffer.push_back(_vs[vi.positionID][i]);
 	if (vi.textureID == -1)

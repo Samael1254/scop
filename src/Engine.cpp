@@ -6,7 +6,6 @@
 #include <cmath>
 #include <exception>
 #include <iostream>
-#include <iterator>
 #include <stdexcept>
 
 Engine::Engine(bool verbose) : _width(1000), _height(800), _window(nullptr), _verbose(verbose)
@@ -181,6 +180,6 @@ void Engine::_keyCallback(GLFWwindow *window, int key, int scancode, int action,
 	Renderer *rendererAddr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 		rendererAddr->switchPolygonMode();
-	if (key == GLFW_KEY_A && action == GLFW_PRESS)
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
 		Renderer::toggleAntialiasing();
 }
