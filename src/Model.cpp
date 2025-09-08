@@ -3,10 +3,12 @@
 #include "Shader.hpp"
 #include "Vector.hpp"
 #include "liblinal.hpp"
+#include <algorithm>
 #include <array>
 #include <cstdint>
 #include <fstream>
 #include <functional>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <sys/types.h>
@@ -16,7 +18,7 @@
 Model::Model(const std::string &filepath) : _scale({1, 1, 1})
 {
 	_loadModel(filepath);
-	_center();
+	_init();
 	_setup();
 }
 
@@ -104,11 +106,12 @@ void Model::setMaterial(Material &material)
 	_material = material;
 }
 
-void Model::_center()
+void Model::_init()
 {
 	if (_vs.empty())
 		return;
 
+	// Find min and max bounds of models
 	Vector<3> max = _vs[0];
 	Vector<3> min = max;
 	for (unsigned int i = 1; i < _vs.size(); ++i)
@@ -119,6 +122,13 @@ void Model::_center()
 			min[j] = std::min(_vs[i][j], min[j]);
 		}
 	}
+
+	// Initialize scale
+	Vector<3> span = max - min;
+	float     maxSpan = std::max(std::max(span.x(), span.y()), span.z());
+	scale(2.5F / maxSpan);
+
+	// Center
 	Vector<3> center = (min + max) * 0.5;
 	for (unsigned int i = 0; i < _vertexBuffer.size(); i += 8)
 	{

@@ -112,9 +112,6 @@ void Renderer::init()
 {
 	// Setup model in scene
 	_model.incrementRotation(M_PI, YAxis);
-	_model.incrementScale(5);
-
-	// _model.center();
 
 	// Setshader uniforms
 	_shader.use();

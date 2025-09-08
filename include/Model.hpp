@@ -64,6 +64,6 @@ class Model
 	static std::string _getNextWord(std::string &line, const std::string &separators);
 	static Vector<3>   _computeNormal(const std::array<Vector<3>, 3> &vertices);
 
-	void _center();
+	void _init();
 	void _setup();
 };
