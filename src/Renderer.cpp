@@ -1,9 +1,9 @@
 #include "Renderer.hpp"
-#include "liblinal.hpp"
 #include "Material.hpp"
 #include "Shader.hpp"
-#include <cmath>
+#include "liblinal.hpp"
 #include <GLFW/glfw3.h>
+#include <cmath>
 #include <stdexcept>
 #include <string>
 
@@ -82,6 +82,11 @@ Model &Renderer::getModel()
 	return _model;
 }
 
+Shader &Renderer::getShader()
+{
+	return _shader;
+}
+
 float Renderer::getRotationSpeed() const
 {
 	return _rotationSpeed;
@@ -95,6 +100,12 @@ float Renderer::getZoomSpeed() const
 void Renderer::updateModel()
 {
 	_shader.setUniform("model", _model.matrix());
+}
+
+void Renderer::resize(int width, int height)
+{
+	_camera.resize(width, height);
+	_shader.setUniform("proj", _camera.projectionMatrix());
 }
 
 void Renderer::init()

@@ -9,6 +9,8 @@ class Camera
 
 	Camera &operator=(const Camera &other);
 
+	void resize(int width, int height);
+
 	Matrix<4, 4> projectionMatrix() const;
 	Matrix<4, 4> viewMatrix() const;
 

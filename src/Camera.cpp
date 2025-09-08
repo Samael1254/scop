@@ -26,6 +26,12 @@ Camera &Camera::operator=(const Camera &other)
 	}
 	return *this;
 }
+
+void Camera::resize(int width, int height)
+{
+	_ratio = static_cast<float>(width) / static_cast<float>(height);
+}
+
 Matrix<4, 4> Camera::projectionMatrix() const
 {
 	Matrix<4, 4> proj = ::projection(_fov, _ratio, _near, _far);

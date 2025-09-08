@@ -1,10 +1,10 @@
 #include "Engine.hpp"
-#include "liblinal.hpp"
 #include "Renderer.hpp"
-#include <cmath>
-#include <exception>
+#include "liblinal.hpp"
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
+#include <cmath>
+#include <exception>
 #include <iostream>
 #include <stdexcept>
 
@@ -57,15 +57,15 @@ void Engine::_createWindow()
 		throw std::runtime_error("failed to create window");
 	}
 	glfwMakeContextCurrent(_window);
-	glfwSetFramebufferSizeCallback(_window, _frameBufferSizeCallback);
 	glfwSetScrollCallback(_window, &Engine::_mouseScrollCallback);
 	glfwSetKeyCallback(_window, _keyCallback);
 }
 
 void Engine::_frameBufferSizeCallback(GLFWwindow *window, int width, int height)
 {
-	(void)window;
 	glViewport(0, 0, width, height);
+	Renderer *rendererAddr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
+	rendererAddr->resize(width, height);
 }
 
 void Engine::_initGLAD()
@@ -95,6 +95,7 @@ void Engine::_renderLoop(Model &model)
 {
 	Renderer renderer(_width, _height, model);
 	glfwSetWindowUserPointer(_window, &renderer);
+	glfwSetFramebufferSizeCallback(_window, _frameBufferSizeCallback);
 
 	while (!glfwWindowShouldClose(_window))
 	{
