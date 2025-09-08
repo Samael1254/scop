@@ -4,6 +4,7 @@
 #include "Light.hpp"
 #include "Material.hpp"
 #include "Model.hpp"
+#include "PointLight.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include <GLFW/glfw3.h>
@@ -25,13 +26,16 @@ class Renderer
 	void        switchPolygonMode();
 	static void toggleAntialiasing();
 	void        updateModel();
-	void        resize(int width, int height);
+	void        updateLight();
 
-	Camera &getCamera();
-	Model  &getModel();
-	Shader &getShader();
-	float   getRotationSpeed() const;
-	float   getZoomSpeed() const;
+	void resize(int width, int height);
+
+	Camera     &getCamera();
+	Model      &getModel();
+	Shader     &getShader();
+	PointLight &getLight();
+	float       getRotationSpeed() const;
+	float       getZoomSpeed() const;
 
   private:
 	Model                 _model;
@@ -39,8 +43,9 @@ class Renderer
 	std::vector<Material> _materials;
 	std::vector<Texture>  _textures;
 
-	Camera _camera;
-	Light  _light;
+	Camera     _camera;
+	PointLight _light;
+	Light      _ambiantLight;
 
 	int   _polygonMode;
 	float _rotationSpeed;

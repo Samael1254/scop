@@ -1,6 +1,8 @@
 #include "Renderer.hpp"
 #include "Material.hpp"
+#include "PointLight.hpp"
 #include "Shader.hpp"
+#include "Vector.hpp"
 #include "liblinal.hpp"
 #include <GLFW/glfw3.h>
 #include <cmath>
@@ -9,7 +11,8 @@
 
 Renderer::Renderer(int width, int height, Model &model)
     : _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")), _camera(width, height),
-      _light(Light(-1 * _camera.getPosition())), _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
+      _light(PointLight(_camera.getPosition(), Vector<3>{1, 1, 1}, 1)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
+      _polygonMode(GL_LINE), _rotationSpeed(0.03), _zoomSpeed(0.1)
 {
 	_materials.push_back(Material());
 	init();
@@ -87,6 +90,11 @@ Shader &Renderer::getShader()
 	return _shader;
 }
 
+PointLight &Renderer::getLight()
+{
+	return _light;
+}
+
 float Renderer::getRotationSpeed() const
 {
 	return _rotationSpeed;
@@ -100,6 +108,11 @@ float Renderer::getZoomSpeed() const
 void Renderer::updateModel()
 {
 	_shader.setUniform("model", _model.matrix());
+}
+
+void Renderer::updateLight()
+{
+	_shader.setUniform("lightPos", _light.getPosition());
 }
 
 void Renderer::resize(int width, int height)
@@ -119,8 +132,10 @@ void Renderer::init()
 	_shader.setUniform("view", _camera.viewMatrix());
 	_shader.setUniform("model", _model.matrix());
 	_shader.setUniform("lightColor", _light.getColor());
-	_shader.setUniform("lightPosition", _light.getPosition());
+	_shader.setUniform("lightPos", _light.getPosition());
 	_shader.setUniform("lightBrightness", _light.getBrightness());
+	_shader.setUniform("ambiantColor", _ambiantLight.getColor());
+	_shader.setUniform("ambiantBrightness", _ambiantLight.getBrightness());
 	_shader.setUniform("diffuseColor", _model.getMaterial().getDiffuse());
 
 	// OpenGL parameters

@@ -1,16 +1,17 @@
+#pragma once
+
 #include "Vector.hpp"
+
 class Light
 {
   public:
 	Light();
-	Light(const Vector<3> &position);
+	Light(const Vector<3> &color, float brightness = 1.0F);
 
 	Vector<3> getColor() const;
 	float     getBrightness() const;
-	Vector<3> getPosition() const;
 
-  private:
+  protected:
 	Vector<3> _color;
 	float     _brightness;
-	Vector<3> _position;
 };

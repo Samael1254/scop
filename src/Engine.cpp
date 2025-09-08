@@ -6,6 +6,7 @@
 #include <cmath>
 #include <exception>
 #include <iostream>
+#include <iterator>
 #include <stdexcept>
 
 Engine::Engine(bool verbose) : _width(1000), _height(800), _window(nullptr), _verbose(verbose)
@@ -141,6 +142,26 @@ void Engine::_processInput(Renderer &renderer)
 	{
 		renderer.getModel().incrementRotation(-renderer.getRotationSpeed(), XAxis);
 		renderer.updateModel();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		renderer.getLight().rotate(renderer.getRotationSpeed(), YAxis);
+		renderer.updateLight();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		renderer.getLight().rotate(-renderer.getRotationSpeed(), YAxis);
+		renderer.updateLight();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		renderer.getLight().rotate(renderer.getRotationSpeed(), XAxis);
+		renderer.updateLight();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		renderer.getLight().rotate(-renderer.getRotationSpeed(), XAxis);
+		renderer.updateLight();
 	}
 }
 

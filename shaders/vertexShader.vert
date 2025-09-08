@@ -15,7 +15,10 @@ out vec3 FragPos;
 void main()
 {
     gl_Position = proj * view * model * vec4(aPos, 1.0);
-    normal = aNormal;
+    mat3x3 normalMat = mat3(transpose(inverse(view * model)));
+    normalMat = mat3(transpose(inverse(model)));
+    normal = normalize(normalMat * aNormal);
+    // normal = aNormal;
     texture = aTexture;
     FragPos = vec3(model * vec4(aPos, 1.));
 }

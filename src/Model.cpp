@@ -66,6 +66,17 @@ Matrix<4, 4> Model::matrix() const
 	return model;
 }
 
+// Matrix<3, 3> Model::normalMatrix() const
+// {
+// 	Matrix<4, 4> model;
+// 	model = Matrix<4, 4>::createTranslationMatrix(_position);
+// 	for (unsigned int i = 0; i < 3; ++i)
+// 		if (_rotation[i] != 0)
+// 			model = model * Matrix<4, 4>::createRotationMatrix(_rotation[i], static_cast<EAxis>(i));
+// 	model = model * Matrix<4, 4>::createScalingMatrix({_scale.x(), _scale.y(), _scale.z(), 1});
+// 	return model;
+// }
+
 void Model::scale(float scale)
 {
 	_scale = {scale, scale, scale};

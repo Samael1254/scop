@@ -21,6 +21,7 @@ class Model
 	void draw(const Shader &shader);
 
 	Matrix<4, 4> matrix() const;
+	// Matrix<3, 3> normalMatrix() const;
 
 	void scale(float scale);
 	void incrementScale(float increment);

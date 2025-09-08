@@ -1,8 +1,8 @@
 #include "Light.hpp"
 
-Light::Light() : _color({1.0F, 1.0F, 1.0F}), _brightness(1.0F), _position({0.0F, 0.0F, 0.0F}) {}
+Light::Light() : _color({1.0F, 1.0F, 1.0F}), _brightness(1.0F) {}
 
-Light::Light(const Vector<3> &position) : _color({1.0F, 1.0F, 1.0F}), _brightness(1.0F), _position(position) {}
+Light::Light(const Vector<3> &color, float brightness) : _color(color), _brightness(brightness) {}
 
 Vector<3> Light::getColor() const
 {
@@ -11,8 +11,4 @@ Vector<3> Light::getColor() const
 float Light::getBrightness() const
 {
 	return _brightness;
-}
-Vector<3> Light::getPosition() const
-{
-	return _position;
 }
