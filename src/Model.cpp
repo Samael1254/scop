@@ -76,32 +76,32 @@ Matrix<4, 4> Model::matrix() const
 // 	return model;
 // }
 
-void Model::scale(float scale)
+void Model::setScale(float scale)
 {
 	_scale = {scale, scale, scale};
 }
 
-void Model::incrementScale(float increment)
+void Model::scale(float increment)
 {
 	_scale *= increment;
 }
 
-void Model::rotate(const Vector<3> &rotator)
+void Model::setRotation(const Vector<3> &rotator)
 {
 	_rotation = rotator;
 }
 
-void Model::incrementRotation(float angle, EAxis axis)
+void Model::rotate(float angle, EAxis axis)
 {
 	_rotation[axis] += angle;
 }
 
-void Model::translate(const Vector<3> &translator)
+void Model::setTranslation(const Vector<3> &translator)
 {
 	_position = translator;
 }
 
-void Model::incrementTranslation(float distance, EAxis axis)
+void Model::translate(float distance, EAxis axis)
 {
 	_position[axis] += distance;
 }
@@ -136,7 +136,7 @@ void Model::_init()
 	// Initialize scale
 	Vector<3> span = max - min;
 	float     maxSpan = std::max(std::max(span.x(), span.y()), span.z());
-	scale(2.5F / maxSpan);
+	setScale(2.5F / maxSpan);
 
 	// Center
 	Vector<3> center = (min + max) * 0.5;

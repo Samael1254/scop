@@ -23,12 +23,12 @@ class Model
 	Matrix<4, 4> matrix() const;
 	// Matrix<3, 3> normalMatrix() const;
 
-	void scale(float scale);
-	void incrementScale(float increment);
-	void rotate(const Vector<3> &rotator);
-	void incrementRotation(float angle, EAxis axis);
-	void translate(const Vector<3> &translator);
-	void incrementTranslation(float distance, EAxis axis);
+	void setScale(float scale);
+	void scale(float increment);
+	void setRotation(const Vector<3> &rotator);
+	void rotate(float angle, EAxis axis);
+	void setTranslation(const Vector<3> &translator);
+	void translate(float distance, EAxis axis);
 
 	const Material &getMaterial() const;
 	void            setMaterial(Material &material);

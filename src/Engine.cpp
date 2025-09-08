@@ -124,22 +124,22 @@ void Engine::_processInput(Renderer &renderer)
 		glfwSetWindowShouldClose(_window, true);
 	if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
-		renderer.getModel().incrementRotation(renderer.getRotationSpeed(), YAxis);
+		renderer.getModel().rotate(renderer.getRotationSpeed(), YAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
-		renderer.getModel().incrementRotation(-renderer.getRotationSpeed(), YAxis);
+		renderer.getModel().rotate(-renderer.getRotationSpeed(), YAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
-		renderer.getModel().incrementRotation(renderer.getRotationSpeed(), XAxis);
+		renderer.getModel().rotate(renderer.getRotationSpeed(), XAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
-		renderer.getModel().incrementRotation(-renderer.getRotationSpeed(), XAxis);
+		renderer.getModel().rotate(-renderer.getRotationSpeed(), XAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
@@ -169,7 +169,7 @@ void Engine::_mouseScrollCallback(GLFWwindow *window, double xOffset, double yOf
 	(void)xOffset;
 	Renderer *rendererAddr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
 	float     speed = yOffset == 1 ? 1 + rendererAddr->getZoomSpeed() : 1 - rendererAddr->getZoomSpeed();
-	rendererAddr->getModel().incrementScale(speed);
+	rendererAddr->getModel().scale(speed);
 	rendererAddr->updateModel();
 }
 

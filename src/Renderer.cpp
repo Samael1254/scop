@@ -4,10 +4,8 @@
 #include "PointLight.hpp"
 #include "Shader.hpp"
 #include "Vector.hpp"
-#include "liblinal.hpp"
 #include <GLFW/glfw3.h>
 #include <cmath>
-#include <iostream>
 #include <stdexcept>
 #include <string>
 
@@ -131,7 +129,7 @@ void Renderer::resize(int width, int height)
 void Renderer::init()
 {
 	// Setup model in scene
-	_model.incrementRotation(M_PI, YAxis);
+	// _model.rotate(M_PI, YAxis);
 
 	// Setshader uniforms
 	_shader.use();
