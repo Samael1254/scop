@@ -11,7 +11,7 @@
 
 Renderer::Renderer(int width, int height, Model &model)
     : _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")), _camera(width, height),
-      _light(PointLight(_camera.getPosition(), Vector<3>{1, 1, 1}, 1)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
+      _light(PointLight(-1 * _camera.getPosition(), Vector<3>{1, 1, 1}, 1)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
       _showTriangles(false), _polygonMode(GL_FILL), _rotationSpeed(0.03), _zoomSpeed(0.1)
 {
 	_materials.push_back(Material());

@@ -134,12 +134,12 @@ void Engine::_processInput(Renderer &renderer)
 	}
 	if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
-		renderer.getModel().rotate(renderer.getRotationSpeed(), XAxis);
+		renderer.getModel().rotate(-renderer.getRotationSpeed(), XAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
-		renderer.getModel().rotate(-renderer.getRotationSpeed(), XAxis);
+		renderer.getModel().rotate(renderer.getRotationSpeed(), XAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
@@ -154,12 +154,12 @@ void Engine::_processInput(Renderer &renderer)
 	}
 	if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		renderer.getLight().rotate(renderer.getRotationSpeed(), XAxis);
+		renderer.getLight().rotate(-renderer.getRotationSpeed(), XAxis);
 		renderer.updateLight();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		renderer.getLight().rotate(-renderer.getRotationSpeed(), XAxis);
+		renderer.getLight().rotate(renderer.getRotationSpeed(), XAxis);
 		renderer.updateLight();
 	}
 }

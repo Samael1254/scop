@@ -7,7 +7,7 @@
 Camera::Camera(int windowWidth, int windowHeight)
     : _fov(M_PI / 3), _near(1.0F), _far(100.0F),
       _ratio(static_cast<float>(windowWidth) / static_cast<float>(windowHeight)), _position({0, 0, -5}),
-      _direction({0, 0, -1}), _right(cross_product({0, 1, 0}, _direction)), _up(cross_product(_direction, _right))
+      _direction({0, 0, 1}), _right(cross_product({0, 1, 0}, _direction)), _up(cross_product(_direction, _right))
 {
 }
 
