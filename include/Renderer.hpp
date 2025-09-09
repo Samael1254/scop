@@ -26,9 +26,11 @@ class Renderer
 
 	void        switchPolygonMode();
 	static void toggleAntialiasing();
-	void        updateModel();
-	void        updateLight();
-	void        resize(int width, int height);
+	void        toggleShowTriangles();
+
+	void updateModel();
+	void updateLight();
+	void resize(int width, int height);
 
 	Camera     &getCamera();
 	Model      &getModel();
@@ -47,6 +49,7 @@ class Renderer
 	PointLight _light;
 	Light      _ambiantLight;
 
+	bool  _showTriangles;
 	int   _polygonMode;
 	float _rotationSpeed;
 	float _zoomSpeed;

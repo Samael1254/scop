@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 			throw std::invalid_argument("too many arguments");
 
 		Engine engine(1000, 800, true);
-		Model  model(argv[1], false);
+		Model  model(argv[1], true);
 		engine.render(model);
 	}
 	catch (std::exception &e)

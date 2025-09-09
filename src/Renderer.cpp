@@ -12,7 +12,7 @@
 Renderer::Renderer(int width, int height, Model &model)
     : _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")), _camera(width, height),
       _light(PointLight(_camera.getPosition(), Vector<3>{1, 1, 1}, 1)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
-      _polygonMode(GL_FILL), _rotationSpeed(0.03), _zoomSpeed(0.1)
+      _showTriangles(false), _polygonMode(GL_FILL), _rotationSpeed(0.03), _zoomSpeed(0.1)
 {
 	_materials.push_back(Material());
 	init();
@@ -60,6 +60,12 @@ void Renderer::switchPolygonMode()
 		break;
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
+}
+
+void Renderer::toggleShowTriangles()
+{
+	_showTriangles = !_showTriangles;
+	_shader.setUniform("showTriangles", _showTriangles);
 }
 
 void Renderer::toggleAntialiasing()
@@ -139,9 +145,10 @@ void Renderer::init()
 	_shader.setUniform("lightColor", _light.getColor());
 	_shader.setUniform("lightPos", _light.getPosition());
 	_shader.setUniform("lightBrightness", _light.getBrightness());
-	_shader.setUniform("ambiantColor", _ambiantLight.getColor());
-	_shader.setUniform("ambiantBrightness", _ambiantLight.getBrightness());
+	_shader.setUniform("ambiantLightColor", _ambiantLight.getColor());
+	_shader.setUniform("ambiantLightBrightness", _ambiantLight.getBrightness());
 	_shader.setUniform("diffuseColor", _model.getMaterial().getDiffuse());
+	_shader.setUniform("showTriangles", _showTriangles);
 
 	// OpenGL parameters
 	glEnable(GL_DEPTH_TEST);

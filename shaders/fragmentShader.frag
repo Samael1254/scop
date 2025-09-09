@@ -9,16 +9,26 @@ out vec4 FragColor;
 uniform vec3 lightColor;
 uniform float lightBrightness;
 uniform vec3 lightPos;
-uniform vec3 ambiantColor;
-uniform float ambiantBrightness;
+uniform vec3 ambiantLightColor;
+uniform float ambiantLightBrightness;
 uniform vec3 diffuseColor;
+uniform bool showTriangles;
+
+float hash(float x)
+{
+    return fract(sin(x) * 43758.5453123);
+}
 
 void main()
 {
     vec3 lightDir = normalize(lightPos - FragPos);
     float incidence = max(dot(lightDir, normalVec), 0.);
-    vec3 ambiant = ambiantBrightness * ambiantColor;
+    vec3 ambiant = ambiantLightBrightness * ambiantLightColor;
     vec3 diffuse = incidence * lightBrightness * lightColor;
-    FragColor = vec4((ambiant + diffuse) * diffuseColor, 1.0);
+
+    float randomnessSpan = 0.3 * float(showTriangles);
+    float idFactor = 1 - randomnessSpan + randomnessSpan * hash(float(gl_PrimitiveID));
+
+    FragColor = vec4((idFactor) * (ambiant + diffuse) * diffuseColor, 1.0);
     // FragColor = vec4(normalVec, 1.0);
 }

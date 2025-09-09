@@ -1,7 +1,7 @@
 
 #include "Material.hpp"
 
-Material::Material() : _diffuse({0.7, 0.7, 0.7}), _ambient({1.0, 1.0, 1.0}), _textureID(-1)
+Material::Material() : _diffuse({0.969, 0.925, 0.6}), _ambient({1.0, 0.0, 0.0}), _textureID(-1)
 {
 	(void)_textureID;
 }

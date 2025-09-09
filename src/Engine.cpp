@@ -182,4 +182,6 @@ void Engine::_keyCallback(GLFWwindow *window, int key, int scancode, int action,
 		rendererAddr->switchPolygonMode();
 	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
 		Renderer::toggleAntialiasing();
+	if (key == GLFW_KEY_E && action == GLFW_PRESS)
+		rendererAddr->toggleShowTriangles();
 }
