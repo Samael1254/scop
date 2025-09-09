@@ -37,6 +37,7 @@ class Renderer
 	Shader     &getShader();
 	PointLight &getLight();
 	float       getRotationSpeed() const;
+	float       getTranslationSpeed() const;
 	float       getZoomSpeed() const;
 
   private:
@@ -49,9 +50,11 @@ class Renderer
 	PointLight _light;
 	Light      _ambiantLight;
 
-	bool  _showTriangles;
-	int   _polygonMode;
+	bool _showTriangles;
+	int  _polygonMode;
+
 	float _rotationSpeed;
+	float _translationSpeed;
 	float _zoomSpeed;
 
 	static Matrix<3, 3> _normalMatrix(const Matrix<4, 4> &modelMatrix, const Matrix<4, 4> &viewMatrix);

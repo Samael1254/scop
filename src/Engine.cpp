@@ -122,6 +122,8 @@ void Engine::_processInput(Renderer &renderer)
 {
 	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(_window, true);
+
+	// Object rotation
 	if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
 		renderer.getModel().rotate(renderer.getRotationSpeed(), YAxis);
@@ -142,22 +144,54 @@ void Engine::_processInput(Renderer &renderer)
 		renderer.getModel().rotate(renderer.getRotationSpeed(), XAxis);
 		renderer.updateModel();
 	}
+	// Object translation
 	if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		renderer.getModel().translate(renderer.getTranslationSpeed(), XAxis);
+		renderer.updateModel();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		renderer.getModel().translate(-renderer.getTranslationSpeed(), XAxis);
+		renderer.updateModel();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		renderer.getModel().translate(renderer.getTranslationSpeed(), YAxis);
+		renderer.updateModel();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		renderer.getModel().translate(-renderer.getTranslationSpeed(), YAxis);
+		renderer.updateModel();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_Q) == GLFW_PRESS)
+	{
+		renderer.getModel().translate(renderer.getTranslationSpeed(), ZAxis);
+		renderer.updateModel();
+	}
+	if (glfwGetKey(_window, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		renderer.getModel().translate(-renderer.getTranslationSpeed(), ZAxis);
+		renderer.updateModel();
+	}
+	// Light translation
+	if (glfwGetKey(_window, GLFW_KEY_L) == GLFW_PRESS)
 	{
 		renderer.getLight().rotate(renderer.getRotationSpeed(), YAxis);
 		renderer.updateLight();
 	}
-	if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
+	if (glfwGetKey(_window, GLFW_KEY_H) == GLFW_PRESS)
 	{
 		renderer.getLight().rotate(-renderer.getRotationSpeed(), YAxis);
 		renderer.updateLight();
 	}
-	if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(_window, GLFW_KEY_K) == GLFW_PRESS)
 	{
 		renderer.getLight().rotate(-renderer.getRotationSpeed(), XAxis);
 		renderer.updateLight();
 	}
-	if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(_window, GLFW_KEY_J) == GLFW_PRESS)
 	{
 		renderer.getLight().rotate(renderer.getRotationSpeed(), XAxis);
 		renderer.updateLight();
@@ -180,8 +214,8 @@ void Engine::_keyCallback(GLFWwindow *window, int key, int scancode, int action,
 	Renderer *rendererAddr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 		rendererAddr->switchPolygonMode();
-	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+	if (key == GLFW_KEY_Y && action == GLFW_PRESS)
 		Renderer::toggleAntialiasing();
-	if (key == GLFW_KEY_E && action == GLFW_PRESS)
+	if (key == GLFW_KEY_T && action == GLFW_PRESS)
 		rendererAddr->toggleShowTriangles();
 }
