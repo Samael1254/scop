@@ -5,6 +5,7 @@
 #include "liblinal.hpp"
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <fstream>
 #include <functional>
@@ -14,7 +15,7 @@
 #include <unordered_map>
 #include <vector>
 
-Model::Model(const std::string &filepath) : _scale({1, 1, 1})
+Model::Model(const std::string &filepath, bool smoothshading) : _scale({1, 1, 1}), _smoothShading(smoothshading)
 {
 	_loadModel(filepath);
 	_init();
@@ -230,12 +231,19 @@ void Model::_readFace(std::string &data)
 			vis[j] = _readVertexIndices(lineData[3 * i + j]);
 			positions[j] = _vs[vis[j].positionID];
 		}
-		Vector<3> faceNormals;
+		Vector<3> faceNormal;
 		bool      hasNormal = vis[0].normalID != -1 && vis[1].normalID != -1 && vis[2].normalID != -1;
-		if (!hasNormal)
-			faceNormals = _computeNormal(positions);
+		if (!hasNormal || !_smoothShading)
+			faceNormal = _computeNormal(positions);
 		for (unsigned int j = 0; j < 3; ++j)
 		{
+			if (!hasNormal || !_smoothShading)
+			{
+				uint32_t index = static_cast<uint32_t>(_vertexBuffer.size() / 8);
+				_elementBuffer.push_back(index);
+				_createVertex(vis[j], faceNormal);
+				continue;
+			}
 			std::unordered_map<VertexIndices, uint64_t, std::hash<VertexIndices>>::iterator it =
 			    _indicesMap.find(vis[j]);
 			if (it != _indicesMap.end())
@@ -246,10 +254,7 @@ void Model::_readFace(std::string &data)
 			uint32_t index = static_cast<uint32_t>(_indicesMap.size());
 			_indicesMap.emplace(vis[j], index);
 			_elementBuffer.push_back(index);
-			if (!hasNormal)
-				_createVertex(vis[j], faceNormals);
-			else
-				_createVertex(vis[j], _vns[vis[j].normalID]);
+			_createVertex(vis[j], _vns[vis[j].normalID]);
 		}
 	}
 }
@@ -299,9 +304,6 @@ int Model::_readVertexIndex(const std::string &data, const std::vector<Vector<N>
 
 void Model::_createVertex(const VertexIndices &vi, Vector<3> normal)
 {
-	// normal *= -1;
-	// normal[0] *= -1;
-	// normal[2] *= -1;
 	for (unsigned int i = 0; i < 3; ++i)
 		_vertexBuffer.push_back(_vs[vi.positionID][i]);
 	if (vi.textureID == -1)
@@ -320,8 +322,8 @@ Vector<3> Model::_computeNormal(const std::array<Vector<3>, 3> &vertices)
 {
 	Vector<3> normal;
 	Vector<3> ab = vertices[1] - vertices[0];
-	Vector<3> bc = vertices[2] - vertices[1];
-	normal = cross_product(ab, bc).normalized();
+	Vector<3> ac = vertices[2] - vertices[0];
+	normal = cross_product(ab, ac).normalized();
 
 	return normal;
 }

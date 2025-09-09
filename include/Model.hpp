@@ -13,7 +13,7 @@
 class Model
 {
   public:
-	Model(const std::string &filepath);
+	Model(const std::string &filepath, bool smoothshading = true);
 	Model(const Model &other);
 
 	Model &operator=(const Model &other);
@@ -38,6 +38,8 @@ class Model
 	Vector<3> _rotation;
 	Vector<3> _scale;
 	Material  _material;
+
+	bool _smoothShading;
 
 	std::vector<Vector<3>> _vs;
 	std::vector<Vector<3>> _vns;

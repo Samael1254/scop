@@ -65,14 +65,9 @@ void Renderer::switchPolygonMode()
 void Renderer::toggleAntialiasing()
 {
 	if (glIsEnabled(GL_MULTISAMPLE))
-	{
-		// glfwWindowHint(GLFW_SAMPLES, 0);
 		glDisable(GL_MULTISAMPLE);
-	}
 	else
-	{
 		glEnable(GL_MULTISAMPLE);
-	}
 }
 
 Camera &Renderer::getCamera()
