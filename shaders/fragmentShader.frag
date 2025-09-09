@@ -1,7 +1,7 @@
 #version 460 core
 
 in vec3 normalVec;
-in vec2 texture;
+in vec2 textureCoords;
 in vec3 FragPos;
 
 out vec4 FragColor;
@@ -14,6 +14,7 @@ uniform float ambiantLightBrightness;
 uniform vec3 diffuseColor;
 uniform vec3 ambiantColor;
 uniform bool showTriangles;
+uniform sampler2D ourTexture;
 
 float hash(float x)
 {
@@ -32,4 +33,5 @@ void main()
 
     FragColor = vec4((idFactor) * (ambiant * ambiantColor + diffuse * diffuseColor), 1.0);
     // FragColor = vec4(normalVec, 1.0);
+    FragColor = texture(ourTexture, textureCoords);
 }

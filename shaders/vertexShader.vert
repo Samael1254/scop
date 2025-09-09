@@ -10,13 +10,13 @@ uniform mat4x4 model;
 uniform mat3x3 normal;
 
 out vec3 normalVec;
-out vec2 texture;
+out vec2 textureCoords;
 out vec3 FragPos;
 
 void main()
 {
     gl_Position = proj * view * model * vec4(aPos, 1.0);
     normalVec = normalize(normal * aNormal);
-    texture = aTexture;
+    textureCoords = aTexture;
     FragPos = vec3(model * vec4(aPos, 1.));
 }

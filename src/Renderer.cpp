@@ -134,10 +134,7 @@ void Renderer::resize(int width, int height)
 
 void Renderer::init()
 {
-	// Setup model in scene
-	// _model.rotate(M_PI, YAxis);
-
-	// Setshader uniforms
+	// Set shader uniforms
 	_shader.use();
 	Matrix<4, 4> model = _model.matrix();
 	Matrix<4, 4> view = _camera.viewMatrix();

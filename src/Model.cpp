@@ -1,6 +1,7 @@
 #include "Model.hpp"
 #include "Matrix.hpp"
 #include "Shader.hpp"
+#include "Texture.hpp"
 #include "Vector.hpp"
 #include "liblinal.hpp"
 #include <algorithm>
@@ -65,17 +66,6 @@ Matrix<4, 4> Model::matrix() const
 	model = model * Matrix<4, 4>::createScalingMatrix({_scale.x(), _scale.y(), _scale.z(), 1});
 	return model;
 }
-
-// Matrix<3, 3> Model::normalMatrix() const
-// {
-// 	Matrix<4, 4> model;
-// 	model = Matrix<4, 4>::createTranslationMatrix(_position);
-// 	for (unsigned int i = 0; i < 3; ++i)
-// 		if (_rotation[i] != 0)
-// 			model = model * Matrix<4, 4>::createRotationMatrix(_rotation[i], static_cast<EAxis>(i));
-// 	model = model * Matrix<4, 4>::createScalingMatrix({_scale.x(), _scale.y(), _scale.z(), 1});
-// 	return model;
-// }
 
 void Model::setScale(float scale)
 {
@@ -330,6 +320,17 @@ Vector<3> Model::_computeNormal(const std::array<Vector<3>, 3> &vertices)
 
 void Model::_setup()
 {
+	unsigned int textureID;
+	Texture      texture("./resources/output.bmp");
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width(), texture.height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+	             texture.data());
+
 	glGenVertexArrays(1, &_vertexArrayID);
 	glGenBuffers(1, &_vertexBufferID);
 	glGenBuffers(1, &_elementBufferID);
