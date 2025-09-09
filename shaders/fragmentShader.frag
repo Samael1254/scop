@@ -12,6 +12,7 @@ uniform vec3 lightPos;
 uniform vec3 ambiantLightColor;
 uniform float ambiantLightBrightness;
 uniform vec3 diffuseColor;
+uniform vec3 ambiantColor;
 uniform bool showTriangles;
 
 float hash(float x)
@@ -29,6 +30,6 @@ void main()
     float randomnessSpan = 0.3 * float(showTriangles);
     float idFactor = 1 - randomnessSpan + randomnessSpan * hash(float(gl_PrimitiveID));
 
-    FragColor = vec4((idFactor) * (ambiant + diffuse) * diffuseColor, 1.0);
+    FragColor = vec4((idFactor) * (ambiant * ambiantColor + diffuse * diffuseColor), 1.0);
     // FragColor = vec4(normalVec, 1.0);
 }

@@ -148,6 +148,7 @@ void Renderer::init()
 	_shader.setUniform("ambiantLightColor", _ambiantLight.getColor());
 	_shader.setUniform("ambiantLightBrightness", _ambiantLight.getBrightness());
 	_shader.setUniform("diffuseColor", _model.getMaterial().getDiffuse());
+	_shader.setUniform("ambiantColor", _model.getMaterial().getAmbient());
 	_shader.setUniform("showTriangles", _showTriangles);
 
 	// OpenGL parameters
