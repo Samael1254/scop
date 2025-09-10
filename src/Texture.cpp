@@ -8,7 +8,9 @@
 #include <stdexcept>
 #include <vector>
 
-Texture::Texture(const std::string &filepath)
+Texture::Texture() : _isEmpty(true), _imageInfo() {}
+
+Texture::Texture(const std::string &filepath) : _isEmpty(false)
 {
 	_loadBMP(filepath);
 }
@@ -16,6 +18,11 @@ Texture::Texture(const std::string &filepath)
 Texture::Texture(const Texture &other)
 {
 	(void)other;
+}
+
+int Texture::empty() const
+{
+	return _isEmpty;
 }
 
 const uint8_t *Texture::data() const
@@ -65,15 +72,6 @@ void Texture::_readHeaders(std::istream &is)
 	if (_imageInfo.compression != 0)
 		throw std::runtime_error("cannot load compressed texture");
 
-	std::cout << "File size: " << _imageInfo.fileSize << "\n";
-	std::cout << "Offset: " << _imageInfo.offset << "\n";
-	std::cout << "Header size: " << _imageInfo.headerSize << "\n";
-	std::cout << "Width: " << _imageInfo.width << "\n";
-	std::cout << "Height: " << _imageInfo.height << "\n";
-	std::cout << "Bits Per Pixel: " << _imageInfo.bitsPerPixel << "\n";
-	std::cout << "Compression: " << _imageInfo.compression << "\n";
-	std::cout << "Image Size: " << _imageInfo.imageSize << "\n";
-	std::cout << "Colors used: " << _imageInfo.colorsUsed << "\n";
 	is.seekg(_imageInfo.headerSize - 40, std::ios_base::cur);
 }
 

@@ -10,12 +10,11 @@
 #include "Texture.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
-#include <vector>
 
 class Renderer
 {
   public:
-	Renderer(int width, int height, Model &model);
+	Renderer(int width, int height, Model *model, Texture *texture);
 	Renderer(const Renderer &other) = default;
 	~Renderer() = default;
 
@@ -41,10 +40,10 @@ class Renderer
 	float       getZoomSpeed() const;
 
   private:
-	Model                 _model;
-	Shader                _shader;
-	std::vector<Material> _materials;
-	std::vector<Texture>  _textures;
+	Model    *_model;
+	Material *_material;
+	Texture  *_texture;
+	Shader    _shader;
 
 	Camera     _camera;
 	PointLight _light;

@@ -9,12 +9,12 @@
 #include <stdexcept>
 #include <string>
 
-Renderer::Renderer(int width, int height, Model &model)
-    : _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")), _camera(width, height),
-      _light(PointLight(-1 * _camera.getPosition(), Vector<3>{1, 1, 1}, 1)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
-      _showTriangles(false), _polygonMode(GL_FILL), _rotationSpeed(0.03), _translationSpeed(0.03), _zoomSpeed(0.1)
+Renderer::Renderer(int width, int height, Model *model, Texture *texture)
+    : _model(model), _texture(texture), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
+      _camera(width, height), _light(PointLight(-1 * _camera.getPosition(), Vector<3>{1, 1, 1}, 1)),
+      _ambiantLight(Vector<3>{1, 1, 1}, 0.2), _showTriangles(false), _polygonMode(GL_FILL), _rotationSpeed(0.03),
+      _translationSpeed(0.03), _zoomSpeed(0.1)
 {
-	_materials.push_back(Material());
 	init();
 }
 
@@ -24,8 +24,8 @@ Renderer &Renderer::operator=(const Renderer &other)
 	{
 		_model = other._model;
 		_shader = other._shader;
-		_materials = other._materials;
-		_textures = other._textures;
+		_material = other._material;
+		_texture = other._texture;
 		_camera = other._camera;
 		_polygonMode = other._polygonMode;
 		_rotationSpeed = other._rotationSpeed;
@@ -39,7 +39,7 @@ void Renderer::render()
 	glClearColor(0.102, 0.188, 0.29, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	_model.draw(_shader);
+	_model->draw(_shader);
 }
 
 void Renderer::switchPolygonMode()
@@ -83,7 +83,7 @@ Camera &Renderer::getCamera()
 
 Model &Renderer::getModel()
 {
-	return _model;
+	return *_model;
 }
 
 Shader &Renderer::getShader()
@@ -113,7 +113,7 @@ float Renderer::getZoomSpeed() const
 
 void Renderer::updateModel()
 {
-	Matrix<4, 4> model = _model.matrix();
+	Matrix<4, 4> model = _model->matrix();
 	Matrix<4, 4> view = _camera.viewMatrix();
 	Matrix<3, 3> normal = _normalMatrix(model, view);
 
@@ -136,7 +136,7 @@ void Renderer::init()
 {
 	// Set shader uniforms
 	_shader.use();
-	Matrix<4, 4> model = _model.matrix();
+	Matrix<4, 4> model = _model->matrix();
 	Matrix<4, 4> view = _camera.viewMatrix();
 	Matrix<3, 3> normal = _normalMatrix(model, view);
 
@@ -149,9 +149,10 @@ void Renderer::init()
 	_shader.setUniform("lightBrightness", _light.getBrightness());
 	_shader.setUniform("ambiantLightColor", _ambiantLight.getColor());
 	_shader.setUniform("ambiantLightBrightness", _ambiantLight.getBrightness());
-	_shader.setUniform("diffuseColor", _model.getMaterial().getDiffuse());
-	_shader.setUniform("ambiantColor", _model.getMaterial().getAmbient());
+	_shader.setUniform("diffuseColor", _model->getMaterial().getDiffuse());
+	_shader.setUniform("ambiantColor", _model->getMaterial().getAmbient());
 	_shader.setUniform("showTriangles", _showTriangles);
+	_shader.setUniform("hasTexture", _model->getMaterial().hasTexture());
 
 	// OpenGL parameters
 	glEnable(GL_DEPTH_TEST);

@@ -8,6 +8,7 @@
 class Texture
 {
   public:
+	Texture();
 	Texture(const std::string &filepath);
 	Texture(const Texture &other);
 	~Texture() = default;
@@ -15,11 +16,12 @@ class Texture
 	const uint8_t *data() const;
 	int            width() const;
 	int            height() const;
+	int            empty() const;
 
   private:
 	std::vector<uint8_t>                _pixelData;
 	std::vector<std::array<uint8_t, 3>> _palette;
-
+	bool                                _isEmpty;
 	struct ImageInfo
 	{
 		uint32_t fileSize;

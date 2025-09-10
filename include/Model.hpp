@@ -2,6 +2,7 @@
 
 #include "Material.hpp"
 #include "Shader.hpp"
+#include "Texture.hpp"
 #include "Vector.hpp"
 #include "VertexIndices.hpp"
 #include "liblinal.hpp"
@@ -13,7 +14,9 @@
 class Model
 {
   public:
+	Model();
 	Model(const std::string &filepath, bool smoothshading = true);
+	Model(const std::string &filepath, Texture *texture, bool smoothshading = true);
 	Model(const Model &other);
 
 	Model &operator=(const Model &other);
@@ -21,7 +24,6 @@ class Model
 	void draw(const Shader &shader);
 
 	Matrix<4, 4> matrix() const;
-	// Matrix<3, 3> normalMatrix() const;
 
 	void setScale(float scale);
 	void scale(float increment);
@@ -30,8 +32,8 @@ class Model
 	void setTranslation(const Vector<3> &translator);
 	void translate(float distance, EAxis axis);
 
-	const Material &getMaterial() const;
-	void            setMaterial(Material &material);
+	Material &getMaterial();
+	void      setTexture(Texture *texture);
 
   private:
 	Vector<3> _position;
@@ -69,4 +71,5 @@ class Model
 
 	void _init();
 	void _setup();
+	void _createGltexture();
 };

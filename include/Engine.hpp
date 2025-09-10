@@ -12,14 +12,19 @@ class Engine
 	Engine(int width, int height, bool verbose = false);
 	~Engine();
 
-	void render(Model &model);
+	void render();
+	void loadTexture(const std::string &filepath);
+	void loadModel(const std::string &filepath);
+	// void loadMaterial(const std::string &filepath);
 
   private:
 	int         _width;
 	int         _height;
 	GLFWwindow *_window;
 	bool        _verbose;
-	// Renderer    _renderer;
+	Model       _model;
+	Material    _material;
+	Texture     _texture;
 
 	void        _init();
 	void        _initGLFW() const;
@@ -29,7 +34,7 @@ class Engine
 
 	void _close();
 
-	void        _renderLoop(Model &model);
+	void        _renderLoop();
 	void        _processInput(Renderer &renderer);
 	static void _mouseScrollCallback(GLFWwindow *window, double xOffset, double yOffset);
 	static void _keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);

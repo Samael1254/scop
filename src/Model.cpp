@@ -1,4 +1,5 @@
 #include "Model.hpp"
+#include "Material.hpp"
 #include "Matrix.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
@@ -16,7 +17,17 @@
 #include <unordered_map>
 #include <vector>
 
+Model::Model() : _scale({1, 1, 1}), _smoothShading(false) {}
+
 Model::Model(const std::string &filepath, bool smoothshading) : _scale({1, 1, 1}), _smoothShading(smoothshading)
+{
+	_loadModel(filepath);
+	_init();
+	_setup();
+}
+
+Model::Model(const std::string &filepath, Texture *texture, bool smoothshading)
+    : _scale({1, 1, 1}), _material(Material(texture)), _smoothShading(smoothshading)
 {
 	_loadModel(filepath);
 	_init();
@@ -97,14 +108,15 @@ void Model::translate(float distance, EAxis axis)
 	_position[axis] += distance;
 }
 
-const Material &Model::getMaterial() const
+Material &Model::getMaterial()
 {
 	return _material;
 }
 
-void Model::setMaterial(Material &material)
+void Model::setTexture(Texture *texture)
 {
-	_material = material;
+	_material.setTexture(texture);
+	_createGltexture();
 }
 
 void Model::_init()
@@ -320,19 +332,7 @@ Vector<3> Model::_computeNormal(const std::array<Vector<3>, 3> &vertices)
 
 void Model::_setup()
 {
-	unsigned int textureID;
-	Texture      texture("./resources/output.bmp");
-	// Texture texture("./resources/marble_bust_texture.bmp");
-
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width(), texture.height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
-	             texture.data());
-
+	_createGltexture();
 	glGenVertexArrays(1, &_vertexArrayID);
 	glGenBuffers(1, &_vertexBufferID);
 	glGenBuffers(1, &_elementBufferID);
@@ -351,4 +351,22 @@ void Model::_setup()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 3, GL_FLOAT, false, 8 * sizeof(float), reinterpret_cast<void *>(5 * sizeof(float)));
 	glEnableVertexAttribArray(2);
+}
+
+void Model::_createGltexture()
+{
+	if (_material.hasTexture())
+	{
+		unsigned int   textureID;
+		const Texture *texture = _material.getTexture();
+
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->width(), texture->height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+		             texture->data());
+	}
 }

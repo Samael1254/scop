@@ -1,17 +1,24 @@
 #pragma once
 
+#include "Texture.hpp"
 #include "Vector.hpp"
-#include <cstdint>
+
 class Material
 {
   public:
 	Material();
+	Material(Texture *texture);
 
 	const Vector<3> &getDiffuse() const;
 	const Vector<3> &getAmbient() const;
+	const Texture   *getTexture() const;
+
+	bool hasTexture() const;
+
+	void setTexture(Texture *texture);
 
   private:
 	Vector<3> _diffuse;
 	Vector<3> _ambient;
-	int16_t   _textureID;
+	Texture  *_texture;
 };

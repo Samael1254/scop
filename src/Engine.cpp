@@ -1,5 +1,6 @@
 #include "Engine.hpp"
 #include "Renderer.hpp"
+#include "Texture.hpp"
 #include "liblinal.hpp"
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
@@ -24,9 +25,23 @@ Engine::~Engine()
 	_close();
 }
 
-void Engine::render(Model &model)
+void Engine::render()
 {
-	_renderLoop(model);
+	_renderLoop();
+}
+
+void Engine::loadTexture(const std::string &filepath)
+{
+	_texture = Texture(filepath);
+	_model.setTexture(&_texture);
+}
+
+void Engine::loadModel(const std::string &filepath)
+{
+	if (_texture.empty())
+		_model = Model(filepath);
+	else
+		_model = Model(filepath, &_texture);
 }
 
 void Engine::_init()
@@ -91,9 +106,9 @@ void Engine::_close()
 		std::cout << "Terminate GLFW and OpenGL\n";
 }
 
-void Engine::_renderLoop(Model &model)
+void Engine::_renderLoop()
 {
-	Renderer renderer(_width, _height, model);
+	Renderer renderer(_width, _height, &_model, &_texture);
 	glfwSetWindowUserPointer(_window, &renderer);
 	glfwSetFramebufferSizeCallback(_window, _frameBufferSizeCallback);
 
@@ -121,7 +136,11 @@ void Engine::_renderLoop(Model &model)
 void Engine::_processInput(Renderer &renderer)
 {
 	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
 		glfwSetWindowShouldClose(_window, true);
+		if (_verbose)
+			std::cout << "Exit program\n";
+	}
 
 	// Object rotation
 	if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)

@@ -11,12 +11,15 @@ uniform float lightBrightness;
 uniform vec3 lightPos;
 uniform vec3 ambiantLightColor;
 uniform float ambiantLightBrightness;
+
 uniform vec3 diffuseColor;
 uniform vec3 ambiantColor;
-uniform bool showTriangles;
-uniform sampler2D ourTexture;
+uniform sampler2D diffuseTexture;
 
-float hash(float x)
+uniform bool showTriangles;
+uniform bool hasTexture;
+
+float rand(float x)
 {
     return fract(sin(x) * 43758.5453123);
 }
@@ -28,10 +31,13 @@ void main()
     vec3 ambiant = ambiantLightBrightness * ambiantLightColor;
     vec3 diffuse = incidence * lightBrightness * lightColor;
 
-    float randomnessSpan = 0.3 * float(showTriangles);
-    float idFactor = 1 - randomnessSpan + randomnessSpan * hash(float(gl_PrimitiveID));
-    vec4 textureColor = texture(ourTexture, textureCoords);
+    float randomnessSpan = 0.2 * float(showTriangles);
+    float idFactor = 1 - randomnessSpan + randomnessSpan * rand(float(gl_PrimitiveID));
+    vec4 textureColor = texture(diffuseTexture, textureCoords);
 
-    FragColor = vec4((idFactor) * (ambiant * ambiantColor + diffuse * diffuseColor) * vec3(textureColor), 1.0);
+    if (hasTexture)
+        FragColor = vec4(idFactor * (ambiant * ambiantColor + diffuse * diffuseColor), 1.0) * textureColor;
+    else
+        FragColor = vec4(idFactor * (ambiant * ambiantColor + diffuse * diffuseColor), 1.0);
     // FragColor = vec4(normalVec, 1.0);
 }
