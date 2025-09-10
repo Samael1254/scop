@@ -30,8 +30,8 @@ void main()
 
     float randomnessSpan = 0.3 * float(showTriangles);
     float idFactor = 1 - randomnessSpan + randomnessSpan * hash(float(gl_PrimitiveID));
+    vec4 textureColor = texture(ourTexture, textureCoords);
 
-    FragColor = vec4((idFactor) * (ambiant * ambiantColor + diffuse * diffuseColor), 1.0);
+    FragColor = vec4((idFactor) * (ambiant * ambiantColor + diffuse * diffuseColor) * vec3(textureColor), 1.0);
     // FragColor = vec4(normalVec, 1.0);
-    FragColor = texture(ourTexture, textureCoords);
 }

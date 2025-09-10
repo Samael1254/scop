@@ -322,6 +322,8 @@ void Model::_setup()
 {
 	unsigned int textureID;
 	Texture      texture("./resources/output.bmp");
+	// Texture texture("./resources/marble_bust_texture.bmp");
+
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

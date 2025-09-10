@@ -1,12 +1,16 @@
 #include "Texture.hpp"
+#include <array>
+#include <cmath>
 #include <cstdint>
 #include <fstream>
+#include <ios>
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 
 Texture::Texture(const std::string &filepath)
 {
-	_pixelData = _loadBMP(filepath);
+	_loadBMP(filepath);
 }
 
 Texture::Texture(const Texture &other)
@@ -14,7 +18,7 @@ Texture::Texture(const Texture &other)
 	(void)other;
 }
 
-const unsigned char *Texture::data() const
+const uint8_t *Texture::data() const
 {
 	return _pixelData.data();
 }
@@ -29,7 +33,7 @@ int Texture::height() const
 	return static_cast<int>(_imageInfo.height);
 }
 
-std::vector<unsigned char> Texture::_loadBMP(const std::string &filepath)
+void Texture::_loadBMP(const std::string &filepath)
 {
 	std::ifstream is(filepath);
 	if (!is.is_open())
@@ -37,8 +41,7 @@ std::vector<unsigned char> Texture::_loadBMP(const std::string &filepath)
 	_readHeaders(is);
 	if (_imageInfo.bitsPerPixel <= 8)
 		_readPalette(is);
-
-	return std::vector<unsigned char>();
+	_readPixelData(is);
 }
 
 void Texture::_readHeaders(std::istream &is)
@@ -48,57 +51,66 @@ void Texture::_readHeaders(std::istream &is)
 	_readUInt32(is);
 	_imageInfo.offset = _readUInt32(is);
 	_imageInfo.headerSize = _readUInt32(is);
-	_imageInfo.width = _readUInt32(is);
-	_imageInfo.height = _readUInt32(is);
+	_imageInfo.width = static_cast<int>(_readUInt32(is));
+	_imageInfo.height = static_cast<int>(_readUInt32(is));
 	_imageInfo.planes = _readUInt16(is);
 	_imageInfo.bitsPerPixel = _readUInt16(is);
 	_imageInfo.compression = _readUInt32(is);
 	_imageInfo.imageSize = _readUInt32(is);
-	_imageInfo.xPixelsPerM = _readUInt32(is);
-	_imageInfo.yPixelsPerM = _readUInt32(is);
+	_imageInfo.xPixelsPerM = static_cast<int>(_readUInt32(is));
+	_imageInfo.yPixelsPerM = static_cast<int>(_readUInt32(is));
 	_imageInfo.colorsUsed = _readUInt32(is);
 	_imageInfo.importantColors = _readUInt32(is);
+
+	if (_imageInfo.compression != 0)
+		throw std::runtime_error("cannot load compressed texture");
 
 	std::cout << "File size: " << _imageInfo.fileSize << "\n";
 	std::cout << "Offset: " << _imageInfo.offset << "\n";
 	std::cout << "Header size: " << _imageInfo.headerSize << "\n";
 	std::cout << "Width: " << _imageInfo.width << "\n";
 	std::cout << "Height: " << _imageInfo.height << "\n";
-	std::cout << "Planes: " << _imageInfo.planes << "\n";
 	std::cout << "Bits Per Pixel: " << _imageInfo.bitsPerPixel << "\n";
-	std::cout << "Planes: " << _imageInfo.planes << "\n";
 	std::cout << "Compression: " << _imageInfo.compression << "\n";
 	std::cout << "Image Size: " << _imageInfo.imageSize << "\n";
-	std::cout << "X pixels per meter: " << _imageInfo.xPixelsPerM << "\n";
-	std::cout << "Y pixels per meter: " << _imageInfo.yPixelsPerM << "\n";
 	std::cout << "Colors used: " << _imageInfo.colorsUsed << "\n";
-	std::cout << "Important colors: " << _imageInfo.importantColors << "\n";
-	is.seekg(_imageInfo.headerSize - 40);
+	is.seekg(_imageInfo.headerSize - 40, std::ios_base::cur);
 }
 
 void Texture::_readPalette(std::istream &is)
 {
 	for (unsigned int i = 0; i < _imageInfo.colorsUsed; ++i)
 	{
+		std::array<uint8_t, 3> color;
 		for (unsigned int j = 0; j < 3; ++j)
-			_palette[i][j] = _readUInt32(is);
+			color[2 - j] = _readUInt32(is);
 		_readUInt32(is);
+		_palette.push_back(color);
 	}
 }
 
 void Texture::_readPixelData(std::istream &is)
 {
-	for (unsigned int i = 0; i < _imageInfo.height; ++i)
+	for (int i = 0; i < _imageInfo.height; ++i)
 	{
-		for (unsigned int j = 0; j < _imageInfo.width; ++j)
+		int j = 0;
+		while (j < _imageInfo.bitsPerPixel / 8 * _imageInfo.width)
 		{
-			uint32_t byte = _readUInt32(is);
 			if (_palette.empty())
-				_pixelData.push_back(byte);
+			{
+				std::array<uint8_t, 3> color;
+				for (int k = 0; k < 3; k++)
+					color[k] = _readUInt8(is);
+				for (int k = 0; k < 3; k++)
+					_pixelData.push_back(color[2 - k]);
+				j += 3;
+			}
 			else
 				for (unsigned int k = 0; k < 3; ++k)
-					_pixelData.push_back(_palette[byte][k]);
+					_pixelData.push_back(_palette[_readUInt8(is)][k]);
 		}
+		while (j++ < ((_imageInfo.bitsPerPixel * _imageInfo.width + 31) / 32) * 4)
+			_readUInt8(is);
 	}
 }
 
@@ -114,6 +126,14 @@ uint16_t Texture::_readUInt16(std::istream &is)
 {
 	char bytes[2];
 	is.read(bytes, 2);
+	uint16_t value = *reinterpret_cast<uint16_t *>(bytes);
+	return value;
+}
+
+uint8_t Texture::_readUInt8(std::istream &is)
+{
+	char bytes[1];
+	is.read(bytes, 1);
 	uint16_t value = *reinterpret_cast<uint16_t *>(bytes);
 	return value;
 }
