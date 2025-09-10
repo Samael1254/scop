@@ -144,13 +144,20 @@ void Renderer::init()
 	_shader.setUniform("view", view);
 	_shader.setUniform("model", model);
 	_shader.setUniform("normal", normal);
+
 	_shader.setUniform("lightColor", _light.getColor());
 	_shader.setUniform("lightPos", _light.getPosition());
 	_shader.setUniform("lightBrightness", _light.getBrightness());
 	_shader.setUniform("ambiantLightColor", _ambiantLight.getColor());
 	_shader.setUniform("ambiantLightBrightness", _ambiantLight.getBrightness());
+
+	_shader.setUniform("cameraPos", _camera.getPosition());
+
 	_shader.setUniform("diffuseColor", _model->getMaterial().getDiffuse());
 	_shader.setUniform("ambiantColor", _model->getMaterial().getAmbient());
+	_shader.setUniform("specularColor", _model->getMaterial().getSpecular());
+	_shader.setUniform("specularExponent", _model->getMaterial().getSpecularExponent());
+
 	_shader.setUniform("showTriangles", _showTriangles);
 	_shader.setUniform("hasTexture", _model->getMaterial().hasTexture());
 

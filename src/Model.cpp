@@ -341,9 +341,10 @@ void Model::_setup()
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBufferID);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _vertexBuffer.size(), _vertexBuffer.data(), GL_STATIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * _elementBuffer.size(), _elementBuffer.data(),
+	glBufferData(GL_ARRAY_BUFFER, static_cast<long>(sizeof(float) * _vertexBuffer.size()), _vertexBuffer.data(),
 	             GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long>(sizeof(uint32_t) * _elementBuffer.size()),
+	             _elementBuffer.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
 	glEnableVertexAttribArray(0);
@@ -368,5 +369,6 @@ void Model::_createGltexture()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->width(), texture->height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
 		             texture->data());
+		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 }

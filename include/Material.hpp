@@ -11,6 +11,8 @@ class Material
 
 	const Vector<3> &getDiffuse() const;
 	const Vector<3> &getAmbient() const;
+	const Vector<3> &getSpecular() const;
+	float            getSpecularExponent() const;
 	const Texture   *getTexture() const;
 
 	bool hasTexture() const;
@@ -20,5 +22,8 @@ class Material
   private:
 	Vector<3> _diffuse;
 	Vector<3> _ambient;
-	Texture  *_texture;
+	Vector<3> _specular;
+	float     _specularExponent;
+
+	Texture *_texture;
 };
