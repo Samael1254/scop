@@ -42,7 +42,7 @@ void main()
     {
         float randomnessSpan = 0.2;
         float idFactor = 1 - randomnessSpan + randomnessSpan * rand(float(gl_PrimitiveID));
-        FragColor = vec4(idFactor * (ambiant * ambiantColor + diffuse * diffuseColor + specular * specularColor), 1.0);
+        FragColor = vec4(idFactor * (ambiant * ambiantColor + diffuse * diffuseColor), 1.0);
     }
     else if (displayMode == 2)
     {
