@@ -9,6 +9,7 @@
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include <GLFW/glfw3.h>
+#include <cstdint>
 #include <glad/gl.h>
 
 class Renderer
@@ -20,12 +21,11 @@ class Renderer
 
 	Renderer &operator=(const Renderer &other);
 
-	void init();
 	void render();
 
 	void        switchPolygonMode();
 	static void toggleAntialiasing();
-	void        toggleShowTriangles();
+	void        changeDisplayMode();
 
 	void updateModel();
 	void updateLight();
@@ -39,6 +39,14 @@ class Renderer
 	float       getTranslationSpeed() const;
 	float       getZoomSpeed() const;
 
+	enum DisplayMode : uint8_t
+	{
+		REGULAR,
+		TRIANGLE,
+		TEXTURE,
+		NORMALS,
+	};
+
   private:
 	Model    *_model;
 	Material *_material;
@@ -49,12 +57,13 @@ class Renderer
 	PointLight _light;
 	Light      _ambiantLight;
 
-	bool _showTriangles;
-	int  _polygonMode;
+	DisplayMode _displayMode;
+	int         _polygonMode;
 
 	float _rotationSpeed;
 	float _translationSpeed;
 	float _zoomSpeed;
 
+	void                _init();
 	static Matrix<3, 3> _normalMatrix(const Matrix<4, 4> &modelMatrix, const Matrix<4, 4> &viewMatrix);
 };

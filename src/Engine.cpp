@@ -236,5 +236,5 @@ void Engine::_keyCallback(GLFWwindow *window, int key, int scancode, int action,
 	if (key == GLFW_KEY_Y && action == GLFW_PRESS)
 		Renderer::toggleAntialiasing();
 	if (key == GLFW_KEY_T && action == GLFW_PRESS)
-		rendererAddr->toggleShowTriangles();
+		rendererAddr->changeDisplayMode();
 }

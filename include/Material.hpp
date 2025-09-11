@@ -14,6 +14,7 @@ class Material
 	const Vector<3> &getSpecular() const;
 	float            getSpecularExponent() const;
 	const Texture   *getTexture() const;
+	const Vector<2> &getTextureScaling() const;
 
 	bool hasTexture() const;
 
@@ -25,5 +26,6 @@ class Material
 	Vector<3> _specular;
 	float     _specularExponent;
 
-	Texture *_texture;
+	Texture  *_texture;
+	Vector<2> _textureScaling;
 };

@@ -12,10 +12,10 @@
 Renderer::Renderer(int width, int height, Model *model, Texture *texture)
     : _model(model), _texture(texture), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
       _camera(width, height), _light(PointLight(-1 * _camera.getPosition(), Vector<3>{1, 1, 1}, 1)),
-      _ambiantLight(Vector<3>{1, 1, 1}, 0.2), _showTriangles(false), _polygonMode(GL_FILL), _rotationSpeed(0.03),
+      _ambiantLight(Vector<3>{1, 1, 1}, 0.2), _displayMode(REGULAR), _polygonMode(GL_FILL), _rotationSpeed(0.03),
       _translationSpeed(0.03), _zoomSpeed(0.1)
 {
-	init();
+	_init();
 }
 
 Renderer &Renderer::operator=(const Renderer &other)
@@ -62,18 +62,18 @@ void Renderer::switchPolygonMode()
 	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
 }
 
-void Renderer::toggleShowTriangles()
-{
-	_showTriangles = !_showTriangles;
-	_shader.setUniform("showTriangles", _showTriangles);
-}
-
 void Renderer::toggleAntialiasing()
 {
 	if (glIsEnabled(GL_MULTISAMPLE))
 		glDisable(GL_MULTISAMPLE);
 	else
 		glEnable(GL_MULTISAMPLE);
+}
+
+void Renderer::changeDisplayMode()
+{
+	_displayMode = static_cast<DisplayMode>((_displayMode + 1) % 4);
+	_shader.setUniform("displayMode", _displayMode);
 }
 
 Camera &Renderer::getCamera()
@@ -132,7 +132,7 @@ void Renderer::resize(int width, int height)
 	_shader.setUniform("proj", _camera.projectionMatrix());
 }
 
-void Renderer::init()
+void Renderer::_init()
 {
 	// Set shader uniforms
 	_shader.use();
@@ -158,8 +158,7 @@ void Renderer::init()
 	_shader.setUniform("specularColor", _model->getMaterial().getSpecular());
 	_shader.setUniform("specularExponent", _model->getMaterial().getSpecularExponent());
 
-	_shader.setUniform("showTriangles", _showTriangles);
-	_shader.setUniform("hasTexture", _model->getMaterial().hasTexture());
+	_shader.setUniform("displayMode", _displayMode);
 
 	// OpenGL parameters
 	glEnable(GL_DEPTH_TEST);

@@ -20,8 +20,7 @@ uniform vec3 specularColor;
 uniform float specularExponent;
 uniform sampler2D diffuseTexture;
 
-uniform bool showTriangles;
-uniform bool hasTexture;
+uniform int displayMode;
 
 float rand(float x)
 {
@@ -37,13 +36,19 @@ void main()
     vec3 reflectionDir = normalize(2 * dot(lightDir, normalVec) * normalVec - lightDir);
     vec3 specular = pow(max(dot(reflectionDir, -normalize(cameraPos - FragPos)), 0.0), specularExponent) * lightBrightness * lightColor * specularColor;
 
-    float randomnessSpan = 0.2 * float(showTriangles);
-    float idFactor = 1 - randomnessSpan + randomnessSpan * rand(float(gl_PrimitiveID));
-    vec4 textureColor = texture(diffuseTexture, textureCoords);
-
-    if (hasTexture)
-        FragColor = vec4(idFactor * ((ambiant * ambiantColor + diffuse * diffuseColor) * vec3(textureColor) + specular * specularColor), 1.0);
-    else
+    if (displayMode == 0)
+        FragColor = vec4(ambiant * ambiantColor + diffuse * diffuseColor + specular * specularColor, 1.0);
+    else if (displayMode == 1)
+    {
+        float randomnessSpan = 0.2;
+        float idFactor = 1 - randomnessSpan + randomnessSpan * rand(float(gl_PrimitiveID));
         FragColor = vec4(idFactor * (ambiant * ambiantColor + diffuse * diffuseColor + specular * specularColor), 1.0);
-    // FragColor = vec4(normalVec, 1.0);
+    }
+    else if (displayMode == 2)
+    {
+        vec4 textureColor = texture(diffuseTexture, textureCoords);
+        FragColor = vec4((ambiant * ambiantColor + diffuse * diffuseColor) * vec3(textureColor) + specular * specularColor, 1.0);
+    }
+    else if (displayMode == 3)
+        FragColor = vec4(normalVec, 1.0);
 }

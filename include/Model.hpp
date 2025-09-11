@@ -64,10 +64,12 @@ class Model
 	VertexIndices    _readVertexIndices(const std::string &data);
 	template <unsigned int N>
 	int                _readVertexIndex(const std::string &data, const std::vector<Vector<N>> &vec);
-	void               _createVertex(const VertexIndices &vi, Vector<3> normal);
+	void               _createVertex(const VertexIndices &vi, const Vector<3> &normal);
 	static std::string _getNextWord(std::string &line);
 	static std::string _getNextWord(std::string &line, const std::string &separators);
 	static Vector<3>   _computeNormal(const std::array<Vector<3>, 3> &vertices);
+	Vector<2>          _computeUV(const VertexIndices &vi, const Vector<3> &normal, const Vector<2> &scaling);
+	static float       _remap(float a, float b, float value);
 
 	void _init();
 	void _setup();

@@ -9,6 +9,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <fstream>
 #include <functional>
 #include <stdexcept>
@@ -304,14 +305,15 @@ int Model::_readVertexIndex(const std::string &data, const std::vector<Vector<N>
 	return index;
 }
 
-void Model::_createVertex(const VertexIndices &vi, Vector<3> normal)
+void Model::_createVertex(const VertexIndices &vi, const Vector<3> &normal)
 {
 	for (unsigned int i = 0; i < 3; ++i)
 		_vertexBuffer.push_back(_vs[vi.positionID][i]);
 	if (vi.textureID == -1)
 	{
-		_vertexBuffer.push_back(0.0F);
-		_vertexBuffer.push_back(0.0F);
+		Vector<2> uv = _computeUV(vi, normal, _material.getTextureScaling());
+		_vertexBuffer.push_back(uv.u());
+		_vertexBuffer.push_back(uv.v());
 	}
 	else
 		for (unsigned int i = 0; i < 2; ++i)
@@ -328,6 +330,65 @@ Vector<3> Model::_computeNormal(const std::array<Vector<3>, 3> &vertices)
 	normal = cross_product(ab, ac).normalized();
 
 	return normal;
+}
+
+Vector<2> Model::_computeUV(const VertexIndices &vi, const Vector<3> &normal, const Vector<2> &scaling)
+{
+	int   face = 1;
+	float max = 0;
+
+	for (int i = 1; i <= 3; ++i)
+	{
+		float length = std::abs(normal[i - 1]);
+		if (length > max)
+		{
+			max = length;
+			face = (std::signbit(normal[i - 1]) * 2 - 1) * i;
+		}
+	}
+
+	Vector<2> uv;
+	float     sign = static_cast<float>(std::signbit(face) * 2 - 1);
+	Vector<4> bounds;
+	if (std::abs(face) == 1)
+	{
+		uv[0] = -sign * _vs[vi.positionID][2];
+		uv[1] = _vs[vi.positionID][1];
+		if (sign > 0)
+			bounds = {0.625, 0.875, 0.5, 0.75};
+		else
+			bounds = {0.125, 0.375, 0.5, 0.75};
+	}
+	else if (std::abs(face) == 2)
+	{
+		uv[0] = sign * _vs[vi.positionID][0];
+		uv[1] = -_vs[vi.positionID][2];
+		if (sign > 0)
+			bounds = {0.375, 0.625, 0.75, 1};
+		else
+			bounds = {0.375, 0.625, 0.25, 0.5};
+	}
+	else if (std::abs(face) == 3)
+	{
+		uv[0] = sign * _vs[vi.positionID][0];
+		uv[1] = _vs[vi.positionID][1];
+		if (sign > 0)
+			bounds = {0.375, 0.625, 0.5, 0.75};
+		else
+			bounds = {0.375, 0.625, 0, 0.25};
+	}
+	uv[0] /= (scaling.u() * _scale[0]);
+	uv[1] /= (scaling.v() * _scale[0]);
+
+	uv[0] = _remap(bounds[0], bounds[1], uv.u());
+	uv[1] = _remap(bounds[2], bounds[3], uv.v());
+
+	return uv;
+}
+
+float Model::_remap(float a, float b, float value)
+{
+	return a + (value * (b - a));
 }
 
 void Model::_setup()
