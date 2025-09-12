@@ -18,7 +18,9 @@ uniform vec3 diffuseColor;
 uniform vec3 ambiantColor;
 uniform vec3 specularColor;
 uniform float specularExponent;
+
 uniform sampler2D diffuseTexture;
+uniform sampler2D normalMap;
 
 uniform int displayMode;
 

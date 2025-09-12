@@ -1,6 +1,7 @@
 #include "Engine.hpp"
+#include "MaterialLibrary.hpp"
+#include "Model.hpp"
 #include "Renderer.hpp"
-#include "Texture.hpp"
 #include "liblinal.hpp"
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
@@ -30,18 +31,24 @@ void Engine::render()
 	_renderLoop();
 }
 
-void Engine::loadTexture(const std::string &filepath)
-{
-	_texture = Texture(filepath);
-	_model.setTexture(&_texture);
-}
-
 void Engine::loadModel(const std::string &filepath)
 {
-	if (_texture.empty())
-		_model = Model(filepath);
-	else
-		_model = Model(filepath, &_texture);
+	_model = Model(filepath, _mtl.getLastMaterial());
+}
+
+void Engine::loadMaterialLibrary(const std::string &filepath)
+{
+	_mtl = MaterialLibrary(filepath);
+}
+
+void Engine::updateActiveMaterial()
+{
+	_model.setMaterial(_mtl.getLastMaterial());
+}
+
+void Engine::updateActiveMaterial(const std::string &name)
+{
+	_model.setMaterial(_mtl.getMaterial(name));
 }
 
 void Engine::_init()
@@ -108,7 +115,7 @@ void Engine::_close()
 
 void Engine::_renderLoop()
 {
-	Renderer renderer(_width, _height, &_model, &_texture);
+	Renderer renderer(_width, _height, &_model);
 	glfwSetWindowUserPointer(_window, &renderer);
 	glfwSetFramebufferSizeCallback(_window, _frameBufferSizeCallback);
 

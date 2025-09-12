@@ -11,24 +11,14 @@
 #include <cstdint>
 #include <cstdlib>
 #include <fstream>
-#include <functional>
 #include <stdexcept>
 #include <string>
-#include <sys/types.h>
-#include <unordered_map>
 #include <vector>
 
-Model::Model() : _scale({1, 1, 1}), _smoothShading(false) {}
+Model::Model() : _scale({1, 1, 1}), _material(nullptr), _smoothShading(false) {}
 
-Model::Model(const std::string &filepath, bool smoothshading) : _scale({1, 1, 1}), _smoothShading(smoothshading)
-{
-	_loadModel(filepath);
-	_init();
-	_setup();
-}
-
-Model::Model(const std::string &filepath, Texture *texture, bool smoothshading)
-    : _scale({1, 1, 1}), _material(Material(texture)), _smoothShading(smoothshading)
+Model::Model(const std::string &filepath, Material *material, bool smoothshading)
+    : _scale({1, 1, 1}), _material(material), _smoothShading(smoothshading)
 {
 	_loadModel(filepath);
 	_init();
@@ -37,7 +27,18 @@ Model::Model(const std::string &filepath, Texture *texture, bool smoothshading)
 
 Model::Model(const Model &other)
 {
-	*this = other;
+	_scale = other._scale;
+	_position = other._position;
+	_rotation = other._rotation;
+	_material = other._material;
+	_vs = other._vs;
+	_vns = other._vns;
+	_vts = other._vts;
+	_elementBuffer = other._elementBuffer;
+	_vertexBuffer = other._vertexBuffer;
+	_vertexArrayID = other._vertexArrayID;
+	_vertexBufferID = other._vertexBufferID;
+	_elementBufferID = other._elementBufferID;
 }
 
 Model &Model::operator=(const Model &other)
@@ -63,6 +64,7 @@ Model &Model::operator=(const Model &other)
 void Model::draw(const Shader &shader)
 {
 	shader.use();
+	_material->draw();
 	glBindVertexArray(_vertexArrayID);
 	glDrawElements(GL_TRIANGLES, static_cast<int>(_elementBuffer.size()), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -109,15 +111,14 @@ void Model::translate(float distance, EAxis axis)
 	_position[axis] += distance;
 }
 
-Material &Model::getMaterial()
+Material *Model::getMaterial()
 {
 	return _material;
 }
 
-void Model::setTexture(Texture *texture)
+void Model::setMaterial(Material *material)
 {
-	_material.setTexture(texture);
-	_createGltexture();
+	_material = material;
 }
 
 void Model::_init()
@@ -311,7 +312,7 @@ void Model::_createVertex(const VertexIndices &vi, const Vector<3> &normal)
 		_vertexBuffer.push_back(_vs[vi.positionID][i]);
 	if (vi.textureID == -1)
 	{
-		Vector<2> uv = _computeUV(vi, normal, _material.getTextureScaling());
+		Vector<2> uv = _computeUV(vi, normal, _material->getTextureScaling());
 		_vertexBuffer.push_back(uv.u());
 		_vertexBuffer.push_back(uv.v());
 	}
@@ -393,7 +394,6 @@ float Model::_remap(float a, float b, float value)
 
 void Model::_setup()
 {
-	_createGltexture();
 	glGenVertexArrays(1, &_vertexArrayID);
 	glGenBuffers(1, &_vertexBufferID);
 	glGenBuffers(1, &_elementBufferID);
@@ -413,23 +413,4 @@ void Model::_setup()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 3, GL_FLOAT, false, 8 * sizeof(float), reinterpret_cast<void *>(5 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-}
-
-void Model::_createGltexture()
-{
-	if (_material.hasTexture())
-	{
-		unsigned int   textureID;
-		const Texture *texture = _material.getTexture();
-
-		glGenTextures(1, &textureID);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->width(), texture->height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
-		             texture->data());
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
 }

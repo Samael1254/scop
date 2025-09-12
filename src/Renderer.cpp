@@ -9,11 +9,10 @@
 #include <stdexcept>
 #include <string>
 
-Renderer::Renderer(int width, int height, Model *model, Texture *texture)
-    : _model(model), _texture(texture), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
-      _camera(width, height), _light(PointLight(-1 * _camera.getPosition(), Vector<3>{1, 1, 1}, 0.7)),
-      _ambiantLight(Vector<3>{1, 1, 1}, 0.2), _displayMode(REGULAR), _polygonMode(GL_FILL), _rotationSpeed(0.03),
-      _translationSpeed(0.03), _zoomSpeed(0.1)
+Renderer::Renderer(int width, int height, Model *model)
+    : _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")), _camera(width, height),
+      _light(PointLight(-1 * _camera.getPosition(), Vector<3>{1, 1, 1}, 0.7)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
+      _displayMode(REGULAR), _polygonMode(GL_FILL), _rotationSpeed(0.03), _translationSpeed(0.03), _zoomSpeed(0.1)
 {
 	_init();
 }
@@ -24,8 +23,6 @@ Renderer &Renderer::operator=(const Renderer &other)
 	{
 		_model = other._model;
 		_shader = other._shader;
-		_material = other._material;
-		_texture = other._texture;
 		_camera = other._camera;
 		_polygonMode = other._polygonMode;
 		_rotationSpeed = other._rotationSpeed;
@@ -153,10 +150,15 @@ void Renderer::_init()
 
 	_shader.setUniform("cameraPos", _camera.getPosition());
 
-	_shader.setUniform("diffuseColor", _model->getMaterial().getDiffuse());
-	_shader.setUniform("ambiantColor", _model->getMaterial().getAmbient());
-	_shader.setUniform("specularColor", _model->getMaterial().getSpecular());
-	_shader.setUniform("specularExponent", _model->getMaterial().getSpecularExponent());
+	_shader.setUniform("diffuseColor", _model->getMaterial()->getDiffuse());
+	_shader.setUniform("ambiantColor", _model->getMaterial()->getAmbient());
+	_shader.setUniform("specularColor", _model->getMaterial()->getSpecular());
+	_shader.setUniform("specularExponent", _model->getMaterial()->getSpecularExponent());
+
+	if (_model->getMaterial()->hasTexture())
+		_shader.setUniform("diffuseTexture", 0);
+	if (_model->getMaterial()->hasNormalMap())
+		_shader.setUniform("normalMap", 1);
 
 	_shader.setUniform("displayMode", _displayMode);
 

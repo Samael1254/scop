@@ -2,12 +2,10 @@
 
 #include "Camera.hpp"
 #include "Light.hpp"
-#include "Material.hpp"
 #include "Matrix.hpp"
 #include "Model.hpp"
 #include "PointLight.hpp"
 #include "Shader.hpp"
-#include "Texture.hpp"
 #include <GLFW/glfw3.h>
 #include <cstdint>
 #include <glad/gl.h>
@@ -15,8 +13,8 @@
 class Renderer
 {
   public:
-	Renderer(int width, int height, Model *model, Texture *texture);
-	Renderer(const Renderer &other) = default;
+	Renderer(int width, int height, Model *model);
+	// Renderer(const Renderer &other) = default;
 	~Renderer() = default;
 
 	Renderer &operator=(const Renderer &other);
@@ -48,10 +46,8 @@ class Renderer
 	};
 
   private:
-	Model    *_model;
-	Material *_material;
-	Texture  *_texture;
-	Shader    _shader;
+	Model *_model;
+	Shader _shader;
 
 	Camera     _camera;
 	PointLight _light;

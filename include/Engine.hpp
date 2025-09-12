@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MaterialLibrary.hpp"
 #include "Model.hpp"
 #include "Renderer.hpp"
 #include <GLFW/glfw3.h>
@@ -13,18 +14,18 @@ class Engine
 	~Engine();
 
 	void render();
-	void loadTexture(const std::string &filepath);
 	void loadModel(const std::string &filepath);
-	// void loadMaterial(const std::string &filepath);
+	void loadMaterialLibrary(const std::string &filepath);
+	void updateActiveMaterial();
+	void updateActiveMaterial(const std::string &name);
 
   private:
-	int         _width;
-	int         _height;
-	GLFWwindow *_window;
-	bool        _verbose;
-	Model       _model;
-	Material    _material;
-	Texture     _texture;
+	int             _width;
+	int             _height;
+	GLFWwindow     *_window;
+	bool            _verbose;
+	Model           _model;
+	MaterialLibrary _mtl;
 
 	void        _init();
 	void        _initGLFW() const;

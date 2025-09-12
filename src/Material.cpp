@@ -1,31 +1,51 @@
 
 #include "Material.hpp"
+#include "Texture.hpp"
 
 Material::Material()
-    : _diffuse({0.969, 0.925, 0.6}), _ambient({0.5, 0, 1}), _specular({1, 1, 1}), _specularExponent(100),
-      _texture(nullptr), _textureScaling({0.5, 0.5})
+    : _diffuseColor({1, 1, 1}), _ambientColor({1, 1, 1}), _specularColor({1, 1, 1}), _specularExponent(0),
+      _texture(nullptr), _textureScaling({1, 1})
+{
+}
+
+Material::Material(const std::string &name)
+    : _name(name), _diffuseColor({1, 1, 1}), _ambientColor({1, 1, 1}), _specularColor({1, 1, 1}), _specularExponent(0),
+      _texture(nullptr), _textureScaling({1, 1})
 {
 }
 
 Material::Material(Texture *texture)
-    : _diffuse({1, 1, 1}), _ambient({1.0, 1.0, 1.0}), _specular({1, 1, 1}), _specularExponent(100), _texture(texture),
-      _textureScaling({0.5, 0.5})
+    : _diffuseColor({1, 1, 1}), _ambientColor({1.0, 1.0, 1.0}), _specularColor({1, 1, 1}), _specularExponent(100),
+      _texture(texture), _textureScaling({0.5, 0.5})
 {
+}
+
+void Material::draw()
+{
+	if (_texture)
+		_texture->draw(GL_TEXTURE0);
+	if (_normalMap)
+		_normalMap->draw(GL_TEXTURE1);
+}
+
+const std::string &Material::getName() const
+{
+	return _name;
 }
 
 const Vector<3> &Material::getDiffuse() const
 {
-	return _diffuse;
+	return _diffuseColor;
 }
 
 const Vector<3> &Material::getAmbient() const
 {
-	return _ambient;
+	return _ambientColor;
 }
 
 const Vector<3> &Material::getSpecular() const
 {
-	return _specular;
+	return _specularColor;
 }
 
 float Material::getSpecularExponent() const
@@ -48,7 +68,44 @@ bool Material::hasTexture() const
 	return _texture != nullptr;
 }
 
+bool Material::hasNormalMap() const
+{
+	return _normalMap != nullptr;
+}
+
+void Material::setDiffuseColor(const Vector<3> &diffuseColor)
+{
+	_diffuseColor = diffuseColor;
+}
+
+void Material::setAmbientColor(const Vector<3> &ambiantColor)
+{
+	_ambientColor = ambiantColor;
+}
+
+void Material::setSpecularColor(const Vector<3> &specularColor)
+{
+	_specularColor = specularColor;
+}
+
+void Material::setSpecularExponent(float specularExponent)
+{
+	_specularExponent = specularExponent;
+}
+
 void Material::setTexture(Texture *texture)
 {
 	_texture = texture;
 }
+
+void Material::setNormalMap(Texture *normalMap)
+{
+	_normalMap = normalMap;
+}
+
+void Material::setTextureScaling(const Vector<2> &textureScaling)
+{
+	_textureScaling = textureScaling;
+}
+
+void Material::_setup() {}

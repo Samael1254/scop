@@ -8,12 +8,12 @@ int main(int argc, char **argv)
 	try
 	{
 		if (argc < 2)
-			throw std::invalid_argument("no argument: mesh and texture files needed");
+			throw std::invalid_argument("no argument: mesh and material files needed");
 		if (argc > 3)
 			throw std::invalid_argument("too many arguments");
 
 		Engine engine(1000, 800);
-		engine.loadTexture(argv[2]);
+		engine.loadMaterialLibrary(argv[2]);
 		engine.loadModel(argv[1]);
 		engine.render();
 	}

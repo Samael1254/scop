@@ -8,21 +8,24 @@
 #include <stdexcept>
 #include <vector>
 
-Texture::Texture() : _isEmpty(true), _imageInfo() {}
-
-Texture::Texture(const std::string &filepath) : _isEmpty(false)
+Texture::Texture(const std::string &filepath)
 {
 	_loadBMP(filepath);
+	_setup();
 }
 
 Texture::Texture(const Texture &other)
 {
-	(void)other;
+	_pixelData = other._pixelData;
+	_palette = other._palette;
+	_imageInfo = other._imageInfo;
+	_setup();
 }
 
-int Texture::empty() const
+void Texture::draw(GLenum textureUnit) const
 {
-	return _isEmpty;
+	glActiveTexture(textureUnit);
+	glBindTexture(GL_TEXTURE_2D, _id);
 }
 
 const uint8_t *Texture::data() const
@@ -44,7 +47,8 @@ void Texture::_loadBMP(const std::string &filepath)
 {
 	std::ifstream is(filepath);
 	if (!is.is_open())
-		throw std::runtime_error("failed to open .obj file: " + filepath);
+		throw std::runtime_error("failed to open .bmp file: " + filepath);
+
 	_readHeaders(is);
 	if (_imageInfo.bitsPerPixel <= 8)
 		_readPalette(is);
@@ -134,4 +138,17 @@ uint8_t Texture::_readUInt8(std::istream &is)
 	is.read(bytes, 1);
 	uint16_t value = *reinterpret_cast<uint16_t *>(bytes);
 	return value;
+}
+
+void Texture::_setup()
+{
+	glGenTextures(1, &_id);
+	glBindTexture(GL_TEXTURE_2D, _id);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, data());
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
