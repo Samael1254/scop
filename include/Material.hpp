@@ -10,7 +10,9 @@ class Material
   public:
 	Material();
 	Material(const std::string &name);
-	Material(Texture *texture);
+	Material(const Material &other);
+
+	Material &operator=(const Material &other);
 
 	void draw();
 
@@ -46,6 +48,4 @@ class Material
 	Texture  *_texture;
 	Texture  *_normalMap;
 	Vector<2> _textureScaling;
-
-	void _setup();
 };

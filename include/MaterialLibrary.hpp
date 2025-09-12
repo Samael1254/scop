@@ -11,9 +11,9 @@ class MaterialLibrary
   public:
 	MaterialLibrary();
 	MaterialLibrary(const std::string &filepath);
-	MaterialLibrary(const MaterialLibrary &other);
+	MaterialLibrary(MaterialLibrary &&other) noexcept;
 
-	MaterialLibrary &operator=(const MaterialLibrary &other);
+	MaterialLibrary &operator=(MaterialLibrary &&other) noexcept;
 
 	Material *getDefaultMaterial();
 	Material *getLastMaterial();
@@ -24,7 +24,7 @@ class MaterialLibrary
 	std::deque<Texture>  _textures;
 
 	void             _loadMTL(const std::string &filepath);
-	Material         _readMaterial(std::ifstream &is, std::string &line);
+	void             _readMaterial(std::ifstream &is, std::string &line);
 	static Vector<3> _readColor(const std::string &data);
 	Texture         *_readTexture(const std::string &data);
 };

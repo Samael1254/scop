@@ -4,20 +4,44 @@
 
 Material::Material()
     : _diffuseColor({1, 1, 1}), _ambientColor({1, 1, 1}), _specularColor({1, 1, 1}), _specularExponent(0),
-      _texture(nullptr), _textureScaling({1, 1})
+      _texture(nullptr), _normalMap(nullptr), _textureScaling({1, 1})
 {
 }
 
 Material::Material(const std::string &name)
     : _name(name), _diffuseColor({1, 1, 1}), _ambientColor({1, 1, 1}), _specularColor({1, 1, 1}), _specularExponent(0),
-      _texture(nullptr), _textureScaling({1, 1})
+      _texture(nullptr), _normalMap(nullptr), _textureScaling({1, 1})
 {
 }
 
-Material::Material(Texture *texture)
-    : _diffuseColor({1, 1, 1}), _ambientColor({1.0, 1.0, 1.0}), _specularColor({1, 1, 1}), _specularExponent(100),
-      _texture(texture), _textureScaling({0.5, 0.5})
+Material::Material(const Material &other)
 {
+	std::cout << "MATERIAL COPY CONSTRUCTOR\n";
+	_name = other._name;
+	_diffuseColor = other._diffuseColor;
+	_ambientColor = other._ambientColor;
+	_specularColor = other._specularColor;
+	_specularExponent = other._specularExponent;
+	_texture = other._texture;
+	_normalMap = other._normalMap;
+	_textureScaling = other._textureScaling;
+}
+
+Material &Material::operator=(const Material &other)
+{
+	std::cout << "MATERIAL OPERATOR=\n";
+	if (this != &other)
+	{
+		_name = other._name;
+		_diffuseColor = other._diffuseColor;
+		_ambientColor = other._ambientColor;
+		_specularColor = other._specularColor;
+		_specularExponent = other._specularExponent;
+		_texture = other._texture;
+		_normalMap = other._normalMap;
+		_textureScaling = other._textureScaling;
+	}
+	return *this;
 }
 
 void Material::draw()
@@ -107,5 +131,3 @@ void Material::setTextureScaling(const Vector<2> &textureScaling)
 {
 	_textureScaling = textureScaling;
 }
-
-void Material::_setup() {}

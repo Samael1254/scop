@@ -11,27 +11,27 @@
 
 MaterialLibrary::MaterialLibrary()
 {
-	_materials.push_back(Material());
+	_materials.emplace_back();
 }
 
 MaterialLibrary::MaterialLibrary(const std::string &filepath)
 {
-	_materials.push_back(Material());
+	_materials.emplace_back();
 	_loadMTL(filepath);
 }
 
-MaterialLibrary::MaterialLibrary(const MaterialLibrary &other)
+MaterialLibrary::MaterialLibrary(MaterialLibrary &&other) noexcept
 {
-	_textures = other._textures;
-	_materials = other._materials;
+	_textures = std::move(other._textures);
+	_materials = std::move(other._materials);
 }
 
-MaterialLibrary &MaterialLibrary::operator=(const MaterialLibrary &other)
+MaterialLibrary &MaterialLibrary::operator=(MaterialLibrary &&other) noexcept
 {
 	if (this != &other)
 	{
-		_textures = other._textures;
-		_materials = other._materials;
+		_textures = std::move(other._textures);
+		_materials = std::move(other._materials);
 	}
 	return *this;
 }
@@ -64,15 +64,14 @@ void MaterialLibrary::_loadMTL(const std::string &filepath)
 
 	std::string line;
 	while (std::getline(is, line))
-	{
 		while (line.substr(0, 7) == "newmtl ")
-			_materials.push_back(_readMaterial(is, line));
-	}
+			_readMaterial(is, line);
 }
 
-Material MaterialLibrary::_readMaterial(std::ifstream &is, std::string &line)
+void MaterialLibrary::_readMaterial(std::ifstream &is, std::string &line)
 {
-	Material newmtl(line.substr(7));
+	_materials.emplace_back(line.substr(7));
+	Material &newmtl = _materials.back();
 	while (std::getline(is, line) && line.substr(0, 7) != "newmtl ")
 	{
 		unsigned long spaceIndex = line.find(' ');
@@ -91,7 +90,6 @@ Material MaterialLibrary::_readMaterial(std::ifstream &is, std::string &line)
 		if (qualifier == "bump")
 			newmtl.setNormalMap(_readTexture(line));
 	}
-	return newmtl;
 }
 
 Vector<3> MaterialLibrary::_readColor(const std::string &data)
@@ -110,6 +108,6 @@ Vector<3> MaterialLibrary::_readColor(const std::string &data)
 Texture *MaterialLibrary::_readTexture(const std::string &data)
 {
 	std::string filepath = data.substr(data.find_last_of(' ', data.find_last_not_of(' ')) + 1);
-	_textures.push_back(Texture(filepath));
+	_textures.emplace_back(filepath);
 	return &_textures.back();
 }
