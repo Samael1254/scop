@@ -23,9 +23,9 @@ make
 ```
 git submodule update --init --recursive
 ```
-You can then run the program by providing a .obj file along with a .mtl file:
+You can then run the program by providing it a .obj file
 ```
-./scop resources/models/mymodel.obj resources/materials/mymaterial.mtl
+./scop resources/models/mymodel.obj
 ```
 
 #### ⌨️ Keybindings
@@ -41,7 +41,5 @@ You can then run the program by providing a .obj file along with a .mtl file:
 #### ⏩ Future improvements
 - Adding normal maps
 - Parse mesh as seperate groups to apply different materials to the same model.
-- Read .mtl files from .obj files
 - Add support for compressed .bmp images.
 - Give information on the model (vertices and triangle count, texture size...)
-- Save screenshot

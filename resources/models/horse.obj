@@ -1,6 +1,6 @@
 # Blender 4.4.0
 # www.blender.org
-mtllib horse.mtl
+mtllib resources/materials/horse.mtl
 o horse_statue_01
 v 0.005692 0.024848 0.018044
 v 0.006708 0.024449 0.020703

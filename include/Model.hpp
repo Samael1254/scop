@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Material.hpp"
+#include "MaterialLibrary.hpp"
 #include "Shader.hpp"
 #include "Vector.hpp"
 #include "VertexIndices.hpp"
@@ -14,7 +15,7 @@ class Model
 {
   public:
 	Model();
-	Model(const std::string &filepath, Material *material, bool smoothshading = true);
+	Model(const std::string &filepath, MaterialLibrary &mtl, bool smoothshading = true);
 	Model(const Model &other);
 
 	Model &operator=(const Model &other);
@@ -54,7 +55,7 @@ class Model
 	uint32_t _vertexBufferID;
 	uint32_t _elementBufferID;
 
-	void             _loadModel(const std::string &filepath);
+	void             _loadModel(const std::string &filepath, MaterialLibrary &mtl);
 	static Vector<3> _readVector3(std::string &data);
 	static Vector<2> _readVector2(std::string &data);
 	void             _readFace(std::string &data);

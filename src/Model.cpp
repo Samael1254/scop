@@ -1,5 +1,6 @@
 #include "Model.hpp"
 #include "Material.hpp"
+#include "MaterialLibrary.hpp"
 #include "Matrix.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
@@ -17,14 +18,14 @@
 
 Model::Model() : _scale({1, 1, 1}), _material(nullptr), _smoothShading(false) {}
 
-Model::Model(const std::string &filepath, Material *material, bool smoothshading)
-    : _scale({1, 1, 1}), _material(material), _smoothShading(smoothshading)
+Model::Model(const std::string &filepath, MaterialLibrary &mtl, bool smoothshading)
+    : _scale({1, 1, 1}), _material(nullptr), _smoothShading(smoothshading)
 {
-	_loadModel(filepath);
+	_loadModel(filepath, mtl);
+	_material = mtl.getLastMaterial();
 	_init();
 	_setup();
 }
-
 Model::Model(const Model &other)
 {
 	_scale = other._scale;
@@ -153,14 +154,14 @@ void Model::_init()
 	}
 }
 
-void Model::_loadModel(const std::string &filepath)
+void Model::_loadModel(const std::string &filepath, MaterialLibrary &mtl)
 {
 	std::ifstream is(filepath);
 	if (!is.is_open())
 		throw std::runtime_error("failed to open .obj file: " + filepath);
 
 	std::string              buf;
-	std::vector<std::string> validTypes = {"v", "vt", "vn", "f"};
+	std::vector<std::string> validTypes = {"v", "vt", "vn", "f", "mtllib"};
 	while (std::getline(is, buf))
 	{
 		std::string type = _getNextWord(buf);
@@ -175,6 +176,8 @@ void Model::_loadModel(const std::string &filepath)
 			_vns.push_back(_readVector3(buf));
 		else if (type == "f")
 			_readFace(buf);
+		else if (type == "mtllib")
+			mtl = MaterialLibrary(_getNextWord(buf));
 	}
 	is.close();
 }
@@ -338,6 +341,7 @@ Vector<2> Model::_computeUV(const VertexIndices &vi, const Vector<3> &normal, co
 {
 	int   face = 1;
 	float max = 0;
+	(void)scaling;
 
 	for (int i = 1; i <= 3; ++i)
 	{
@@ -379,8 +383,6 @@ Vector<2> Model::_computeUV(const VertexIndices &vi, const Vector<3> &normal, co
 		else
 			bounds = {0.375, 0.625, 0, 0.25};
 	}
-	uv[0] /= (scaling.u() * _scale[0]);
-	uv[1] /= (scaling.v() * _scale[0]);
 
 	uv[0] = _remap(bounds[0], bounds[1], uv.u());
 	uv[1] = _remap(bounds[2], bounds[3], uv.v());

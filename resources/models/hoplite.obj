@@ -1,6 +1,6 @@
 # Blender 4.4.0
 # www.blender.org
-mtllib hoplite.mtl
+mtllib resources/materials/hoplite.mtl
 o Untitled
 v -1.500000 0.600000 -1.100000
 v -1.400000 0.600000 -1.200000

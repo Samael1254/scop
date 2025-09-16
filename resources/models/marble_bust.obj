@@ -1,5 +1,6 @@
 # Blender 4.4.0
 # www.blender.org
+mtllib resources/materials/marble_bust.mtl
 o marble_bust_01
 v -0.072986 0.411163 0.106808
 v -0.040521 0.404445 0.125883

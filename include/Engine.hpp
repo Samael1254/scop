@@ -20,10 +20,11 @@ class Engine
 	void updateActiveMaterial(const std::string &name);
 
   private:
-	int             _width;
-	int             _height;
-	GLFWwindow     *_window;
-	bool            _verbose;
+	int         _width;
+	int         _height;
+	GLFWwindow *_window;
+	bool        _verbose;
+
 	Model           _model;
 	MaterialLibrary _mtl;
 

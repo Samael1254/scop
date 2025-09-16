@@ -3,20 +3,19 @@
 #include "Texture.hpp"
 
 Material::Material()
-    : _diffuseColor({1, 1, 1}), _ambientColor({1, 1, 1}), _specularColor({1, 1, 1}), _specularExponent(0),
+    : _diffuseColor({1, 1, 1}), _ambientColor({1, 1, 1}), _specularColor({1, 1, 1}), _specularExponent(10),
       _texture(nullptr), _normalMap(nullptr), _textureScaling({1, 1})
 {
 }
 
 Material::Material(const std::string &name)
-    : _name(name), _diffuseColor({1, 1, 1}), _ambientColor({1, 1, 1}), _specularColor({1, 1, 1}), _specularExponent(0),
+    : _name(name), _diffuseColor({1, 1, 1}), _ambientColor({1, 1, 1}), _specularColor({1, 1, 1}), _specularExponent(10),
       _texture(nullptr), _normalMap(nullptr), _textureScaling({1, 1})
 {
 }
 
 Material::Material(const Material &other)
 {
-	std::cout << "MATERIAL COPY CONSTRUCTOR\n";
 	_name = other._name;
 	_diffuseColor = other._diffuseColor;
 	_ambientColor = other._ambientColor;
@@ -29,7 +28,6 @@ Material::Material(const Material &other)
 
 Material &Material::operator=(const Material &other)
 {
-	std::cout << "MATERIAL OPERATOR=\n";
 	if (this != &other)
 	{
 		_name = other._name;

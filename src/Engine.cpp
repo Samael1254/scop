@@ -34,7 +34,8 @@ void Engine::render()
 
 void Engine::loadModel(const std::string &filepath)
 {
-	_model = Model(filepath, _mtl.getLastMaterial());
+	// _model = Model(filepath, _mtl.getLastMaterial());
+	_model = Model(filepath, _mtl);
 }
 
 void Engine::loadMaterialLibrary(const std::string &filepath)
