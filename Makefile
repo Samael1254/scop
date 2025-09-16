@@ -17,7 +17,7 @@ DEP=$(OBJS:.o=.d)
 
 CXX = c++
 
-CXXFLAGS = -Wall -Wextra -Werror -std=c++20 -I$(HEADERS_DIR) -Imatrix/includes# -O2
+CXXFLAGS = -Wall -Wextra -Werror -std=c++20 -I$(HEADERS_DIR) -ILLA/includes# -O2
 
 LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -llinal -L$(MATRIX_DIR)
 
@@ -34,12 +34,12 @@ $(BUILD_DIR)/%.o: $(SRCS_DIR)/%.cpp
 	@ tput cuu1 && tput el
 
 $(MATRIX):
-	@ make -s -C matrix
+	@ make -s -C LLA
 
 all: $(NAME)
 
 clean_libs:
-	@ make fclean -s -C matrix
+	@ make fclean -s -C LLA
 
 clean:
 	@ rm -f $(OBJS) $(DEP) $(TEST_OBJS) $(TEST_DEP)
