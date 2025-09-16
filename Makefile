@@ -7,7 +7,9 @@ BUILD_DIR = build
 MATRIX_DIR = LLA/lib
 MATRIX = $(MATRIX_DIR)/liblinal.a
 
-SRCS = main.cpp gl.cpp Engine.cpp Renderer.cpp Shader.cpp Texture.cpp Model.cpp Material.cpp Camera.cpp VertexIndices.cpp Light.cpp PointLight.cpp MaterialLibrary.cpp
+SRCS = main.cpp gl.cpp Engine.cpp Renderer.cpp Shader.cpp\
+	   Texture.cpp Model.cpp Material.cpp Camera.cpp VertexIndices.cpp\
+	   Light.cpp PointLight.cpp MaterialLibrary.cpp ImageSaver.cpp
 
 SRCS := $(addprefix $(SRCS_DIR)/, $(SRCS))
 

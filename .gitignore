@@ -4,3 +4,4 @@ build/
 compile_flags.txt
 valgrind.supp
 matrix/
+screenshots/

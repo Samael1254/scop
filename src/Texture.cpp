@@ -53,6 +53,7 @@ void Texture::_loadBMP(const std::string &filepath)
 	if (_imageInfo.bitsPerPixel <= 8)
 		_readPalette(is);
 	_readPixelData(is);
+	is.close();
 }
 
 void Texture::_readHeaders(std::istream &is)

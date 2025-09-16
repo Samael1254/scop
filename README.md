@@ -6,6 +6,8 @@ Scop is a model renderer running on OpenGL. It can load models in the .obj forma
 
 After loading the model, you can move it around, and display its triangles, texture or normals.
 
+You can also take a screeshot of the image currently displayed.
+
 Some example models, materials and textures are provided in the resources directory. The textures must be specified inside the material to be loaded.
 
 It relies on the [LLA](https://github.com/Samael1254/LLA) linear algebrea library for mathematical operations.
@@ -34,6 +36,7 @@ You can then run the program by providing a .obj file along with a .mtl file:
 - T: Change display mode (plain, triangles, texture, normals)
 - P: Change polygon mode (points, lines, triangles)
 - Y: Enable antialiasing
+- Space: Take screenshot
 
 #### ⏩ Future improvements
 - Adding normal maps

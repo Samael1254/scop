@@ -66,6 +66,7 @@ void MaterialLibrary::_loadMTL(const std::string &filepath)
 	while (std::getline(is, line))
 		while (line.substr(0, 7) == "newmtl ")
 			_readMaterial(is, line);
+	is.close();
 }
 
 void MaterialLibrary::_readMaterial(std::ifstream &is, std::string &line)

@@ -1,4 +1,5 @@
 #include "Engine.hpp"
+#include "ImageSaver.hpp"
 #include "MaterialLibrary.hpp"
 #include "Model.hpp"
 #include "Renderer.hpp"
@@ -244,4 +245,11 @@ void Engine::_keyCallback(GLFWwindow *window, int key, int scancode, int action,
 		Renderer::toggleAntialiasing();
 	if (key == GLFW_KEY_T && action == GLFW_PRESS)
 		rendererAddr->changeDisplayMode();
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		int width;
+		int height;
+		glfwGetWindowSize(window, &width, &height);
+		ImageSaver::saveFrame("screenshots", width, height);
+	}
 }

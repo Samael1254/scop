@@ -176,6 +176,7 @@ void Model::_loadModel(const std::string &filepath)
 		else if (type == "f")
 			_readFace(buf);
 	}
+	is.close();
 }
 
 std::string Model::_getNextWord(std::string &line)

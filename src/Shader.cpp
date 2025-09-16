@@ -179,5 +179,6 @@ std::string Shader::_loadShader(const std::string &filename)
 		throw std::runtime_error("failed to open shader file: " + filename);
 	std::stringstream ss;
 	ss << is.rdbuf();
+	is.close();
 	return ss.str();
 }
