@@ -1,0 +1,8 @@
+# Material Count: 1
+
+newmtl horse
+Ns 100
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+map_kd resources/textures/horse.bmp
