@@ -85,7 +85,7 @@ void MaterialLibrary::_readMaterial(std::ifstream &is, std::string &line)
 			newmtl.setSpecularColor(_readColor(line));
 		if (qualifier == "Ns")
 			newmtl.setSpecularExponent(static_cast<float>(std::atof(line.c_str())));
-		if (qualifier == "map_kd")
+		if (qualifier == "map_Kd")
 			newmtl.setTexture(_readTexture(line));
 		if (qualifier == "bump")
 			newmtl.setNormalMap(_readTexture(line));

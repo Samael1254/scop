@@ -1,0 +1,8 @@
+newmtl mat0
+Ns 100
+Ka 1.0 1.0 1.0
+Kd 1 1 1
+Ks 0.5 0.5 0.5
+Ke 0.0 0.0 0.0
+map_Kd resources/textures/food_apple_01_diff_2k.bmp
+# bump food_apple_01_nor_gl_2k.jpg

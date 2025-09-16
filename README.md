@@ -32,6 +32,7 @@ You can then run the program by providing a .obj file along with a .mtl file:
 - Mouse wheel: Scale model
 - HJKL: Rotate light
 - T: Change display mode (plain, triangles, texture, normals)
+- P: Change polygon mode (points, lines, triangles)
 - Y: Enable antialiasing
 
 #### ⏩ Future improvements
@@ -40,3 +41,4 @@ You can then run the program by providing a .obj file along with a .mtl file:
 - Read .mtl files from .obj files
 - Add support for compressed .bmp images.
 - Give information on the model (vertices and triangle count, texture size...)
+- Save screenshot
