@@ -10,6 +10,11 @@ You can also take a screeshot of the image currently displayed.
 
 Some example models, materials and textures are provided in the resources directory. The textures must be specified inside the material to be loaded.
 
+![Bust](./previews/bust.png)
+![Apple](./previews/apple.png)
+![teapot](./previews/teapot.png)
+![horse](./previews/horse.png)
+
 It relies on the [LLA](https://github.com/Samael1254/LLA) linear algebrea library for mathematical operations.
 
 #### 📦 Installation and usage
