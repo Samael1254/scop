@@ -68,7 +68,14 @@ void Engine::_initGLFW() const
 
 void Engine::_createWindow()
 {
-	_window = glfwCreateWindow(_config.getWindow().width, _config.getWindow().height, "Scop", nullptr, nullptr);
+	if (_config.getWindow().fullscreen)
+	{
+		GLFWmonitor       *monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode *vidMode = glfwGetVideoMode(monitor);
+		_window = glfwCreateWindow(vidMode->width, vidMode->height, "Scop", monitor, nullptr);
+	}
+	else
+		_window = glfwCreateWindow(_config.getWindow().width, _config.getWindow().height, "Scop", nullptr, nullptr);
 	if (!_window)
 	{
 		glfwTerminate();

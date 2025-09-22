@@ -19,4 +19,6 @@ class TomlParser
 	TomlParser() = default;
 	TomlParser(const TomlParser &other) = default;
 	TomlParser &operator=(const TomlParser &other) = default;
+
+	static std::string _stripComment(const std::string &line);
 };

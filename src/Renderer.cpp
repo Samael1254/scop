@@ -167,7 +167,10 @@ void Renderer::_init()
 
 	// OpenGL parameters
 	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_MULTISAMPLE);
+	if (_config.getRoot().antialiasing)
+		glEnable(GL_MULTISAMPLE);
+	else
+		glDisable(GL_MULTISAMPLE);
 	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
 }
 

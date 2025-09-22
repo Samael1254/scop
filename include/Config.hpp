@@ -14,6 +14,7 @@ class Config
 	struct Root
 	{
 		bool verbose = false;
+		bool antialiasing = false;
 	} _root;
 	struct Window
 	{

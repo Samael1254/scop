@@ -1,13 +1,15 @@
 #include "TomlParser.hpp"
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 
 std::string TomlParser::parseLine(const std::string &line)
 {
-	std::string str = line;
-	str.erase(0, str.find_first_of('#'));
+	if (line.empty())
+		return line;
+	std::string str = _stripComment(line);
 	str.erase(0, str.find_first_not_of(" \t"));
 	str.erase(str.find_last_not_of(" \t") + 1);
 	return str;
@@ -63,4 +65,21 @@ std::array<float, 3> TomlParser::readColor(const std::string &key, const std::st
 	color[1] = static_cast<float>((colorRaw >> 8) & 0xFF) / 255.0F;
 	color[2] = static_cast<float>(colorRaw & 0xFF) / 255.0F;
 	return color;
+}
+
+std::string TomlParser::_stripComment(const std::string &line)
+{
+	bool inDouble = false;
+	bool inSingle = false;
+
+	for (uint32_t i = 0; i < line.length(); i++)
+	{
+		if (line[i] == '\"' && !inSingle)
+			inDouble = !inDouble;
+		if (line[i] == '\'' && !inDouble)
+			inSingle = !inSingle;
+		if (line[i] == '#' && !inSingle && !inDouble)
+			return line.substr(0, i);
+	}
+	return line;
 }

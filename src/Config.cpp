@@ -43,6 +43,7 @@ void Config::print() const
 	std::cout << "-- Config scop.toml --\n";
 	std::cout << "\n[Root]\n";
 	std::cout << "verbose = " << _root.verbose << "\n";
+	std::cout << "antialiasing = " << _root.antialiasing << "\n";
 	std::cout << "\n[Window]\n";
 	std::cout << "width = " << _window.width << "\n";
 	std::cout << "height = " << _window.height << "\n";
@@ -68,6 +69,7 @@ void Config::_loadConfig(const std::string &confFile)
 
 		if (line.empty() || line[0] == '#')
 			continue;
+		std::cout << line << "\n";
 		if (line[0] == '[')
 		{
 			table = _switchTable(line);
@@ -76,7 +78,6 @@ void Config::_loadConfig(const std::string &confFile)
 
 		std::string key = TomlParser::parseKey(line);
 		std::string value = TomlParser::parseValue(line);
-		// std::cout << "key = " << key << ", value = '" << value << "'" << std::endl;
 
 		switch (table)
 		{
@@ -111,6 +112,8 @@ void Config::_loadRoot(const std::string &key, const std::string &value)
 {
 	if (key == "verbose")
 		_root.verbose = TomlParser::readBool(key, value);
+	else if (key == "antialiasing")
+		_root.antialiasing = TomlParser::readBool(key, value);
 	else
 		throw std::runtime_error("unknown key in 'Root': " + key);
 }
