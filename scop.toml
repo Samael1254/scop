@@ -12,4 +12,12 @@ color = "#62798c" # Background color in hex (default = "#62798c")
 [Window]
 width = 1000 # Window width in pixels (default = 800)
 height = 800 # Window height in pixels (default = 600)
-fullscreen = true # Set window as fullscreen (default = false)
+fullscreen = false # Set window as fullscreen (default = false)
+
+[Camera]
+fov = 1.047 # Camera field of view (default: 1.047)
+
+[Object]
+rotationSpeed = 0.03 # Object rotation speed (default 0.03)
+translationSpeed = 0.03 # Object translation speed (default 0.03)
+zoomSpeed = 0.1 # Object zoom speed (default 0.1)

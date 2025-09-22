@@ -45,6 +45,14 @@ uint32_t TomlParser::readUInt(const std::string &key, const std::string &value)
 	return std::atoi(value.c_str());
 }
 
+float TomlParser::readFloat(const std::string &key, const std::string &value)
+{
+	if (value.empty() || std::find_if(value.begin(), value.end(),
+	                                  [](unsigned char c) { return !std::isdigit(c) && c != '.'; }) != value.end())
+		throw std::runtime_error("invalid value for '" + key + "' (expected positive integer): " + value);
+	return static_cast<float>(std::atof(value.c_str()));
+}
+
 std::string TomlParser::readString(const std::string &key, const std::string &value)
 {
 	if ((!value.starts_with('\'') || !value.ends_with('\'')) && (!value.starts_with('"') || !value.ends_with('"')))

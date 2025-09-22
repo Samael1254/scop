@@ -12,9 +12,9 @@
 
 Renderer::Renderer(const Config &config, Model *model)
     : _config(config), _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
-      _camera(config.getWindow().width, config.getWindow().height),
+      _camera(config.getWindow().width, config.getWindow().height, config.getCamera().fov),
       _light(PointLight(-1 * _camera.getPosition(), Vector<3>{1, 1, 1}, 0.7)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
-      _displayMode(REGULAR), _polygonMode(GL_FILL), _rotationSpeed(0.03), _translationSpeed(0.03), _zoomSpeed(0.1)
+      _displayMode(REGULAR), _polygonMode(GL_FILL)
 {
 	_init();
 }
@@ -27,8 +27,6 @@ Renderer &Renderer::operator=(const Renderer &other)
 		_shader = other._shader;
 		_camera = other._camera;
 		_polygonMode = other._polygonMode;
-		_rotationSpeed = other._rotationSpeed;
-		_zoomSpeed = other._zoomSpeed;
 	}
 	return *this;
 }
@@ -96,19 +94,9 @@ PointLight &Renderer::getLight()
 	return _light;
 }
 
-float Renderer::getRotationSpeed() const
+const Config &Renderer::getConfig() const
 {
-	return _rotationSpeed;
-}
-
-float Renderer::getTranslationSpeed() const
-{
-	return _translationSpeed;
-}
-
-float Renderer::getZoomSpeed() const
-{
-	return _zoomSpeed;
+	return _config;
 }
 
 void Renderer::updateModel()

@@ -155,74 +155,74 @@ void Engine::_processInput(Renderer &renderer)
 	// Object rotation
 	if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
-		renderer.getModel().rotate(renderer.getRotationSpeed(), YAxis);
+		renderer.getModel().rotate(_config.getObject().rotationSpeed, YAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
-		renderer.getModel().rotate(-renderer.getRotationSpeed(), YAxis);
+		renderer.getModel().rotate(-_config.getObject().rotationSpeed, YAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
-		renderer.getModel().rotate(-renderer.getRotationSpeed(), XAxis);
+		renderer.getModel().rotate(-_config.getObject().rotationSpeed, XAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
-		renderer.getModel().rotate(renderer.getRotationSpeed(), XAxis);
+		renderer.getModel().rotate(_config.getObject().rotationSpeed, XAxis);
 		renderer.updateModel();
 	}
 	// Object translation
 	if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		renderer.getModel().translate(renderer.getTranslationSpeed(), XAxis);
+		renderer.getModel().translate(_config.getObject().translationSpeed, XAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		renderer.getModel().translate(-renderer.getTranslationSpeed(), XAxis);
+		renderer.getModel().translate(-_config.getObject().translationSpeed, XAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		renderer.getModel().translate(renderer.getTranslationSpeed(), YAxis);
+		renderer.getModel().translate(_config.getObject().translationSpeed, YAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		renderer.getModel().translate(-renderer.getTranslationSpeed(), YAxis);
+		renderer.getModel().translate(-_config.getObject().translationSpeed, YAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
-		renderer.getModel().translate(renderer.getTranslationSpeed(), ZAxis);
+		renderer.getModel().translate(_config.getObject().translationSpeed, ZAxis);
 		renderer.updateModel();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_E) == GLFW_PRESS)
 	{
-		renderer.getModel().translate(-renderer.getTranslationSpeed(), ZAxis);
+		renderer.getModel().translate(-_config.getObject().translationSpeed, ZAxis);
 		renderer.updateModel();
 	}
 	// Light translation
 	if (glfwGetKey(_window, GLFW_KEY_L) == GLFW_PRESS)
 	{
-		renderer.getLight().rotate(renderer.getRotationSpeed(), YAxis);
+		renderer.getLight().rotate(_config.getObject().rotationSpeed, YAxis);
 		renderer.updateLight();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_H) == GLFW_PRESS)
 	{
-		renderer.getLight().rotate(-renderer.getRotationSpeed(), YAxis);
+		renderer.getLight().rotate(-_config.getObject().rotationSpeed, YAxis);
 		renderer.updateLight();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_K) == GLFW_PRESS)
 	{
-		renderer.getLight().rotate(-renderer.getRotationSpeed(), XAxis);
+		renderer.getLight().rotate(-_config.getObject().rotationSpeed, XAxis);
 		renderer.updateLight();
 	}
 	if (glfwGetKey(_window, GLFW_KEY_J) == GLFW_PRESS)
 	{
-		renderer.getLight().rotate(renderer.getRotationSpeed(), XAxis);
+		renderer.getLight().rotate(_config.getObject().rotationSpeed, XAxis);
 		renderer.updateLight();
 	}
 }
@@ -231,7 +231,8 @@ void Engine::_mouseScrollCallback(GLFWwindow *window, double xOffset, double yOf
 {
 	(void)xOffset;
 	Renderer *rendererAddr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
-	float     speed = yOffset == 1 ? 1 + rendererAddr->getZoomSpeed() : 1 - rendererAddr->getZoomSpeed();
+	float     zoomSpeed = rendererAddr->getConfig().getObject().zoomSpeed;
+	float     speed = yOffset == 1 ? 1 + zoomSpeed : 1 - zoomSpeed;
 	rendererAddr->getModel().scale(speed);
 	rendererAddr->updateModel();
 }

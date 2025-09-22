@@ -30,13 +30,11 @@ class Renderer
 	void updateLight();
 	void resize(int width, int height);
 
-	Camera     &getCamera();
-	Model      &getModel();
-	Shader     &getShader();
-	PointLight &getLight();
-	float       getRotationSpeed() const;
-	float       getTranslationSpeed() const;
-	float       getZoomSpeed() const;
+	Camera       &getCamera();
+	Model        &getModel();
+	Shader       &getShader();
+	PointLight   &getLight();
+	const Config &getConfig() const;
 
 	enum DisplayMode : uint8_t
 	{
@@ -57,10 +55,6 @@ class Renderer
 
 	DisplayMode _displayMode;
 	int         _polygonMode;
-
-	float _rotationSpeed;
-	float _translationSpeed;
-	float _zoomSpeed;
 
 	void                _init();
 	static Matrix<3, 3> _normalMatrix(const Matrix<4, 4> &modelMatrix, const Matrix<4, 4> &viewMatrix);

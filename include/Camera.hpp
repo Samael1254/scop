@@ -4,7 +4,7 @@
 class Camera
 {
   public:
-	Camera(int windowWidth, int windowHeight);
+	Camera(int windowWidth, int windowHeight, float fov);
 	Camera(const Camera &other) = default;
 
 	Camera &operator=(const Camera &other);

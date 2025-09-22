@@ -37,6 +37,16 @@ const Config::Background &Config::getBackground() const
 	return _background;
 }
 
+const Config::Camera &Config::getCamera() const
+{
+	return _camera;
+}
+
+const Config::Object &Config::getObject() const
+{
+	return _object;
+}
+
 void Config::print() const
 {
 	std::cout << std::boolalpha;
@@ -53,6 +63,12 @@ void Config::print() const
 	std::cout << _background.color[0] << ", ";
 	std::cout << _background.color[1] << ", ";
 	std::cout << _background.color[2] << "\n";
+	std::cout << "\n[Camera]\n";
+	std::cout << "fov = " << _camera.fov << "\n";
+	std::cout << "\n[Object]\n";
+	std::cout << "rotationSpeed = " << _object.rotationSpeed << "\n";
+	std::cout << "translationSpeed = " << _object.translationSpeed << "\n";
+	std::cout << "zoomSpeed = " << _object.zoomSpeed << "\n";
 	std::cout << std::noboolalpha;
 }
 
@@ -90,6 +106,12 @@ void Config::_loadConfig(const std::string &confFile)
 		case BACKGROUND:
 			_loadBackground(key, value);
 			break;
+		case CAMERA:
+			_loadCamera(key, value);
+			break;
+		case OBJECT:
+			_loadObject(key, value);
+			break;
 		}
 	}
 }
@@ -105,6 +127,10 @@ Config::Table Config::_switchTable(std::string &line)
 		return Table::WINDOW;
 	if (line == "Background")
 		return Table::BACKGROUND;
+	if (line == "Camera")
+		return Table::CAMERA;
+	if (line == "Object")
+		return Table::OBJECT;
 	throw std::runtime_error("unknown table value: " + line);
 }
 
@@ -136,4 +162,24 @@ void Config::_loadBackground(const std::string &key, const std::string &value)
 		_background.color = TomlParser::readColor(key, value);
 	else
 		throw std::runtime_error("unknown key in 'Background': " + key);
+}
+
+void Config::_loadCamera(const std::string &key, const std::string &value)
+{
+	if (key == "fov")
+		_camera.fov = TomlParser::readFloat(key, value);
+	else
+		throw std::runtime_error("unknown key in 'Camera': " + key);
+}
+
+void Config::_loadObject(const std::string &key, const std::string &value)
+{
+	if (key == "rotationSpeed")
+		_object.rotationSpeed = TomlParser::readFloat(key, value);
+	else if (key == "translationSpeed")
+		_object.translationSpeed = TomlParser::readFloat(key, value);
+	else if (key == "zoomSpeed")
+		_object.zoomSpeed = TomlParser::readFloat(key, value);
+	else
+		throw std::runtime_error("unknown key in 'Object': " + key);
 }

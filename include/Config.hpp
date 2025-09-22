@@ -26,12 +26,24 @@ class Config
 	{
 		std::array<float, 3> color = {0.384, 0.474, 0.549};
 	} _background;
+	struct Camera
+	{
+		float fov = 1.047;
+	} _camera;
+	struct Object
+	{
+		float rotationSpeed = 0.03;
+		float translationSpeed = 0.03;
+		float zoomSpeed = 0.1;
+	} _object;
 
 	enum Table : uint8_t
 	{
 		ROOT,
 		WINDOW,
-		BACKGROUND
+		BACKGROUND,
+		CAMERA,
+		OBJECT,
 	};
 
 	void _loadConfig(const std::string &confFile);
@@ -41,6 +53,8 @@ class Config
 	void _loadRoot(const std::string &key, const std::string &value);
 	void _loadWindow(const std::string &key, const std::string &value);
 	void _loadBackground(const std::string &key, const std::string &value);
+	void _loadCamera(const std::string &key, const std::string &value);
+	void _loadObject(const std::string &key, const std::string &value);
 
 	std::string _parseKey(const std::string &line);
 	std::string _parseValue(const std::string &line);
@@ -54,4 +68,6 @@ class Config
 	const Root       &getRoot() const;
 	const Window     &getWindow() const;
 	const Background &getBackground() const;
+	const Camera     &getCamera() const;
+	const Object     &getObject() const;
 };
