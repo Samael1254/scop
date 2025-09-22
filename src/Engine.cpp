@@ -1,4 +1,5 @@
 #include "Engine.hpp"
+#include "Config.hpp"
 #include "ImageSaver.hpp"
 #include "MaterialLibrary.hpp"
 #include "Model.hpp"
@@ -11,13 +12,7 @@
 #include <iostream>
 #include <stdexcept>
 
-Engine::Engine(bool verbose) : _width(1000), _height(800), _window(nullptr), _verbose(verbose)
-{
-	_init();
-}
-
-Engine::Engine(int width, int height, bool verbose)
-    : _width(width), _height(height), _window(nullptr), _verbose(verbose)
+Engine::Engine() : _window(nullptr)
 {
 	_init();
 }
@@ -34,7 +29,6 @@ void Engine::render()
 
 void Engine::loadModel(const std::string &filepath)
 {
-	// _model = Model(filepath, _mtl.getLastMaterial());
 	_model = Model(filepath, _mtl);
 }
 
@@ -68,13 +62,13 @@ void Engine::_initGLFW() const
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
-	if (_verbose)
+	if (_config.getRoot().verbose)
 		std::cout << "Loaded GLFW" << "\n";
 }
 
 void Engine::_createWindow()
 {
-	_window = glfwCreateWindow(_width, _height, "Scop", nullptr, nullptr);
+	_window = glfwCreateWindow(_config.getWindow().width, _config.getWindow().height, "Scop", nullptr, nullptr);
 	if (!_window)
 	{
 		glfwTerminate();
@@ -100,10 +94,10 @@ void Engine::_initGLAD()
 		_close();
 		throw std::runtime_error("failed to initialize OpenGL context through GLAD");
 	}
-	if (_verbose)
+	if (_config.getRoot().verbose)
 		std::cout << "Loaded OpenGL version " << GLAD_VERSION_MAJOR(gladVersion) << "."
 		          << GLAD_VERSION_MINOR(gladVersion) << "\n";
-	glViewport(0, 0, _width, _height);
+	glViewport(0, 0, _config.getWindow().width, _config.getWindow().height);
 }
 
 void Engine::_close()
@@ -111,13 +105,13 @@ void Engine::_close()
 	if (_window)
 		glfwDestroyWindow(_window);
 	glfwTerminate();
-	if (_verbose)
+	if (_config.getRoot().verbose)
 		std::cout << "Terminate GLFW and OpenGL\n";
 }
 
 void Engine::_renderLoop()
 {
-	Renderer renderer(_width, _height, &_model);
+	Renderer renderer(_config, &_model);
 	glfwSetWindowUserPointer(_window, &renderer);
 	glfwSetFramebufferSizeCallback(_window, _frameBufferSizeCallback);
 
@@ -147,7 +141,7 @@ void Engine::_processInput(Renderer &renderer)
 	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(_window, true);
-		if (_verbose)
+		if (_config.getRoot().verbose)
 			std::cout << "Exit program\n";
 	}
 

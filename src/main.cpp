@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 		if (argc > 2)
 			throw std::invalid_argument("too many arguments");
 
-		Engine engine(1000, 800);
+		Engine engine;
 		engine.loadModel(argv[1]);
 		engine.render();
 	}

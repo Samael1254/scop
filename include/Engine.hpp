@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Config.hpp"
 #include "MaterialLibrary.hpp"
 #include "Model.hpp"
 #include "Renderer.hpp"
@@ -9,8 +10,7 @@
 class Engine
 {
   public:
-	Engine(bool verbose = false);
-	Engine(int width, int height, bool verbose = false);
+	Engine();
 	~Engine();
 
 	void render();
@@ -20,10 +20,8 @@ class Engine
 	void updateActiveMaterial(const std::string &name);
 
   private:
-	int         _width;
-	int         _height;
+	Config      _config;
 	GLFWwindow *_window;
-	bool        _verbose;
 
 	Model           _model;
 	MaterialLibrary _mtl;

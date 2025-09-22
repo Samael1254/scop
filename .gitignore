@@ -3,5 +3,5 @@ test/
 build/
 compile_flags.txt
 valgrind.supp
-matrix/
+LLA/
 screenshots/

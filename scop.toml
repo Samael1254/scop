@@ -1,0 +1,14 @@
+# Scop configuration file
+
+# General settings
+verbose = false # Print additional information in terminal (default = false)
+
+# Background settings
+[Background]
+color = "#62798c" # Background color in hex (default = "#62798c")
+
+# Window settings
+[Window]
+width = 1000 # Window width in pixels (default = 800)
+height = 800 # Window height in pixels (default = 600)
+fullscreen = false # Set window as fullscreen (default = false)

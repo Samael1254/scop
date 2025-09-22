@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera.hpp"
+#include "Config.hpp"
 #include "Light.hpp"
 #include "Matrix.hpp"
 #include "Model.hpp"
@@ -13,7 +14,7 @@
 class Renderer
 {
   public:
-	Renderer(int width, int height, Model *model);
+	Renderer(const Config &config, Model *model);
 	// Renderer(const Renderer &other) = default;
 	~Renderer() = default;
 
@@ -46,8 +47,9 @@ class Renderer
 	};
 
   private:
-	Model *_model;
-	Shader _shader;
+	const Config &_config;
+	Model        *_model;
+	Shader        _shader;
 
 	Camera     _camera;
 	PointLight _light;

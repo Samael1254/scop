@@ -9,7 +9,8 @@ MATRIX = $(MATRIX_DIR)/liblinal.a
 
 SRCS = main.cpp gl.cpp Engine.cpp Renderer.cpp Shader.cpp\
 	   Texture.cpp Model.cpp Material.cpp Camera.cpp VertexIndices.cpp\
-	   Light.cpp PointLight.cpp MaterialLibrary.cpp ImageSaver.cpp
+	   Light.cpp PointLight.cpp MaterialLibrary.cpp ImageSaver.cpp Config.cpp\
+	   TomlParser.cpp
 
 SRCS := $(addprefix $(SRCS_DIR)/, $(SRCS))
 

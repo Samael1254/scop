@@ -5,12 +5,14 @@
 #include "Shader.hpp"
 #include "Vector.hpp"
 #include <GLFW/glfw3.h>
+#include <array>
 #include <cmath>
 #include <stdexcept>
 #include <string>
 
-Renderer::Renderer(int width, int height, Model *model)
-    : _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")), _camera(width, height),
+Renderer::Renderer(const Config &config, Model *model)
+    : _config(config), _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
+      _camera(config.getWindow().width, config.getWindow().height),
       _light(PointLight(-1 * _camera.getPosition(), Vector<3>{1, 1, 1}, 0.7)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
       _displayMode(REGULAR), _polygonMode(GL_FILL), _rotationSpeed(0.03), _translationSpeed(0.03), _zoomSpeed(0.1)
 {
@@ -33,7 +35,8 @@ Renderer &Renderer::operator=(const Renderer &other)
 
 void Renderer::render()
 {
-	glClearColor(0.102, 0.188, 0.29, 1.0);
+	const std::array<float, 3> &backgroundColor = _config.getBackground().color;
+	glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	_model->draw(_shader);
