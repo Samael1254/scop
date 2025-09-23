@@ -33,6 +33,10 @@ You can then run the program by providing it a .obj file
 ./scop resources/models/mymodel.obj
 ```
 
+#### ⚙️ Configuration
+
+You can configure scop in the scop.toml file. In it you can change parameters such as background color, fullscreen, window size, and others.
+
 #### ⌨️ Keybindings
 - WASDQE: Move model around
 - Arrows: Rotate model

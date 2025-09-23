@@ -14,7 +14,6 @@ Config::Config()
 	try
 	{
 		_loadConfig("scop.toml");
-		print();
 	}
 	catch (std::exception &e)
 	{
@@ -81,37 +80,43 @@ void Config::_loadConfig(const std::string &confFile)
 	std::string line;
 	while (std::getline(is, line))
 	{
-		line = TomlParser::parseLine(line);
-
-		if (line.empty() || line[0] == '#')
-			continue;
-		std::cout << line << "\n";
-		if (line[0] == '[')
+		try
 		{
-			table = _switchTable(line);
-			continue;
+			line = TomlParser::parseLine(line);
+
+			if (line.empty() || line[0] == '#')
+				continue;
+			if (line[0] == '[')
+			{
+				table = _switchTable(line);
+				continue;
+			}
+
+			std::string key = TomlParser::parseKey(line);
+			std::string value = TomlParser::parseValue(line);
+
+			switch (table)
+			{
+			case ROOT:
+				_loadRoot(key, value);
+				break;
+			case WINDOW:
+				_loadWindow(key, value);
+				break;
+			case BACKGROUND:
+				_loadBackground(key, value);
+				break;
+			case CAMERA:
+				_loadCamera(key, value);
+				break;
+			case OBJECT:
+				_loadObject(key, value);
+				break;
+			}
 		}
-
-		std::string key = TomlParser::parseKey(line);
-		std::string value = TomlParser::parseValue(line);
-
-		switch (table)
+		catch (std::exception &e)
 		{
-		case ROOT:
-			_loadRoot(key, value);
-			break;
-		case WINDOW:
-			_loadWindow(key, value);
-			break;
-		case BACKGROUND:
-			_loadBackground(key, value);
-			break;
-		case CAMERA:
-			_loadCamera(key, value);
-			break;
-		case OBJECT:
-			_loadObject(key, value);
-			break;
+			std::cerr << "\e[033mConfig warning:\e[0m " << e.what() << std::endl;
 		}
 	}
 }
@@ -119,7 +124,7 @@ void Config::_loadConfig(const std::string &confFile)
 Config::Table Config::_switchTable(std::string &line)
 {
 	if (!line.ends_with(']'))
-		throw std::runtime_error("bad table syntax (expected ']' at the end: " + line);
+		throw std::runtime_error("bad table syntax (expected ']' at the end): " + line);
 	line = line.substr(1, line.length() - 2);
 	line.erase(0, line.find_first_not_of(" \t"));
 	line.erase(line.find_last_not_of(" \t") + 1);
