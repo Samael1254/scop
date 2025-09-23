@@ -1,8 +1,10 @@
 #version 460 core
 
-in vec3 normalVec;
-in vec2 textureCoords;
-in vec3 FragPos;
+in VS_OUT {
+    vec2 textureCoords;
+    vec3 FragPos;
+    mat3 TBN;
+} fs_in;
 
 out vec4 FragColor;
 
@@ -31,12 +33,15 @@ float rand(float x)
 
 void main()
 {
-    vec3 lightDir = normalize(lightPos - FragPos);
-    float incidence = max(dot(lightDir, normalVec), 0.);
+    vec3 normal = texture(normalMap, fs_in.textureCoords).rgb;
+    normal = normalize(normal * 2.0 - 1.0);
+    normal = normalize(fs_in.TBN * normal);
+    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+    float incidence = max(dot(lightDir, normal), 0.);
     vec3 ambiant = ambiantLightBrightness * ambiantLightColor;
     vec3 diffuse = incidence * lightBrightness * lightColor;
-    vec3 reflectionDir = normalize(2 * dot(lightDir, normalVec) * normalVec - lightDir);
-    vec3 specular = pow(max(dot(reflectionDir, -normalize(cameraPos - FragPos)), 0.0), specularExponent) * lightBrightness * lightColor * specularColor;
+    vec3 reflectionDir = normalize(2 * dot(lightDir, normal) * normal - lightDir);
+    vec3 specular = pow(max(dot(reflectionDir, -normalize(cameraPos - fs_in.FragPos)), 0.0), specularExponent) * lightBrightness * lightColor * specularColor;
 
     if (displayMode == 0)
         FragColor = vec4(ambiant * ambiantColor + diffuse * diffuseColor + specular * specularColor, 1.0);
@@ -48,9 +53,9 @@ void main()
     }
     else if (displayMode == 2)
     {
-        vec4 textureColor = texture(diffuseTexture, textureCoords);
+        vec4 textureColor = texture(diffuseTexture, fs_in.textureCoords);
         FragColor = vec4((ambiant * ambiantColor + diffuse * diffuseColor) * vec3(textureColor) + specular * specularColor, 1.0);
     }
     else if (displayMode == 3)
-        FragColor = vec4(normalVec, 1.0);
+        FragColor = vec4(normal, 1.0);
 }

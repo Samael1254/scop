@@ -6,3 +6,4 @@ Ka 1.000000 1.000000 1.000000
 Kd 1.000000 1.000000 1.000000
 Ks 1.000000 1.000000 1.000000
 map_Kd resources/textures/marble_bust.bmp
+bump resources/normalMaps/marble_bust.bmp

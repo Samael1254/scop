@@ -8,7 +8,7 @@ After loading the model, you can move it around, and display its triangles, text
 
 You can also take a screeshot of the image currently displayed.
 
-Some example models, materials and textures are provided in the resources directory. The textures must be specified inside the material to be loaded.
+Some example models, materials, textures and normal maps are provided in the resources directory. The textures and normal maps must be specified inside the material to be loaded (see .mtl specifications).
 
 ![Bust](./previews/bust.png)
 ![Apple](./previews/apple.png)
@@ -48,7 +48,6 @@ You can configure scop in the scop.toml file. In it you can change parameters su
 - Space: Take screenshot
 
 #### ⏩ Future improvements
-- Adding normal maps
 - Parse mesh as seperate groups to apply different materials to the same model.
 - Add support for compressed .bmp images.
 - Give information on the model (vertices and triangle count, texture size...)

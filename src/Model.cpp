@@ -26,6 +26,7 @@ Model::Model(const std::string &filepath, MaterialLibrary &mtl, bool smoothshadi
 	_init();
 	_setup();
 }
+
 Model::Model(const Model &other)
 {
 	_scale = other._scale;
@@ -146,7 +147,7 @@ void Model::_init()
 
 	// Center
 	Vector<3> center = (min + max) * 0.5;
-	for (unsigned int i = 0; i < _vertexBuffer.size(); i += 8)
+	for (unsigned int i = 0; i < _vertexBuffer.size(); i += VERTEX_SIZE)
 	{
 		_vertexBuffer[i] -= center[0];
 		_vertexBuffer[i + 1] -= center[1];
@@ -234,6 +235,8 @@ void Model::_readFace(std::string &data)
 	{
 		std::array<VertexIndices, 3> vis;
 		std::array<Vector<3>, 3>     positions;
+		std::array<Vector<2>, 3>     uvs;
+		std::array<Vector<3>, 2>     tangentSpace;
 		for (unsigned int j = 0; j < 3; ++j)
 		{
 			vis[j] = _readVertexIndices(lineData[3 * i + j]);
@@ -245,11 +248,20 @@ void Model::_readFace(std::string &data)
 			faceNormal = _computeNormal(positions);
 		for (unsigned int j = 0; j < 3; ++j)
 		{
+			if (vis[j].textureID == -1)
+				uvs[j] =
+				    _computeUV(vis[j], hasNormal ? _vns[vis[j].normalID] : faceNormal, _material->getTextureScaling());
+			else
+				uvs[j] = _vts[vis[j].textureID];
+			tangentSpace = _computeTangentSpace(positions, uvs);
+		}
+		for (unsigned int j = 0; j < 3; ++j)
+		{
 			if (!hasNormal || !_smoothShading)
 			{
-				uint32_t index = static_cast<uint32_t>(_vertexBuffer.size() / 8);
+				uint32_t index = static_cast<uint32_t>(_vertexBuffer.size() / VERTEX_SIZE);
 				_elementBuffer.push_back(index);
-				_createVertex(vis[j], faceNormal);
+				_createVertex(vis[j], faceNormal, uvs[j], tangentSpace);
 				continue;
 			}
 			std::unordered_map<VertexIndices, uint64_t, std::hash<VertexIndices>>::iterator it =
@@ -262,7 +274,7 @@ void Model::_readFace(std::string &data)
 			uint32_t index = static_cast<uint32_t>(_indicesMap.size());
 			_indicesMap.emplace(vis[j], index);
 			_elementBuffer.push_back(index);
-			_createVertex(vis[j], _vns[vis[j].normalID]);
+			_createVertex(vis[j], _vns[vis[j].normalID], uvs[j], tangentSpace);
 		}
 	}
 }
@@ -310,21 +322,19 @@ int Model::_readVertexIndex(const std::string &data, const std::vector<Vector<N>
 	return index;
 }
 
-void Model::_createVertex(const VertexIndices &vi, const Vector<3> &normal)
+void Model::_createVertex(const VertexIndices &vi, const Vector<3> &normal, const Vector<2> &uv,
+                          const std::array<Vector<3>, 2> &tangentSpace)
 {
 	for (unsigned int i = 0; i < 3; ++i)
 		_vertexBuffer.push_back(_vs[vi.positionID][i]);
-	if (vi.textureID == -1)
-	{
-		Vector<2> uv = _computeUV(vi, normal, _material->getTextureScaling());
-		_vertexBuffer.push_back(uv.u());
-		_vertexBuffer.push_back(uv.v());
-	}
-	else
-		for (unsigned int i = 0; i < 2; ++i)
-			_vertexBuffer.push_back(_vts[vi.textureID][i]);
+	for (unsigned int i = 0; i < 2; ++i)
+		_vertexBuffer.push_back(uv[i]);
 	for (unsigned int i = 0; i < 3; ++i)
 		_vertexBuffer.push_back(normal[i]);
+	for (unsigned int i = 0; i < 3; ++i)
+		_vertexBuffer.push_back(tangentSpace[0][i]);
+	for (unsigned int i = 0; i < 3; ++i)
+		_vertexBuffer.push_back(tangentSpace[1][i]);
 }
 
 Vector<3> Model::_computeNormal(const std::array<Vector<3>, 3> &vertices)
@@ -390,6 +400,23 @@ Vector<2> Model::_computeUV(const VertexIndices &vi, const Vector<3> &normal, co
 	return uv;
 }
 
+std::array<Vector<3>, 2> Model::_computeTangentSpace(const std::array<Vector<3>, 3> &positions,
+                                                     const std::array<Vector<2>, 3> &uvs)
+{
+	Vector<3> edge1 = positions[1] - positions[0];
+	Vector<3> edge2 = positions[2] - positions[0];
+	Vector<2> deltaUV1 = uvs[1] - uvs[0];
+	Vector<2> deltaUV2 = uvs[2] - uvs[0];
+
+	float det = deltaUV1.x() * deltaUV2.y() - deltaUV2.x() * deltaUV1.y();
+	if (std::abs(det) < 1e-8F)
+		return {Vector<3>{1, 0, 0}, Vector<3>{0, 1, 0}};
+	float     f = 1 / det;
+	Vector<3> tangent = f * (edge1 * deltaUV2.y() - edge2 * deltaUV1.y());
+	Vector<3> bitangent = f * (edge2 * deltaUV1.x() - edge1 * deltaUV2.x());
+	return {tangent, bitangent};
+}
+
 float Model::_remap(float a, float b, float value)
 {
 	return a + (value * (b - a));
@@ -410,10 +437,18 @@ void Model::_setup()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long>(sizeof(uint32_t) * _elementBuffer.size()),
 	             _elementBuffer.data(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE * sizeof(float), nullptr);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, false, 8 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, VERTEX_SIZE * sizeof(float),
+	                      reinterpret_cast<void *>(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 3, GL_FLOAT, false, 8 * sizeof(float), reinterpret_cast<void *>(5 * sizeof(float)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, false, VERTEX_SIZE * sizeof(float),
+	                      reinterpret_cast<void *>(5 * sizeof(float)));
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 3, GL_FLOAT, false, VERTEX_SIZE * sizeof(float),
+	                      reinterpret_cast<void *>(8 * sizeof(float)));
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(4, 3, GL_FLOAT, false, VERTEX_SIZE * sizeof(float),
+	                      reinterpret_cast<void *>(11 * sizeof(float)));
+	glEnableVertexAttribArray(4);
 }

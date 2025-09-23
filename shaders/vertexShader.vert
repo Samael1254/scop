@@ -3,20 +3,29 @@
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec2 aTexture;
 layout(location = 2) in vec3 aNormal;
+layout(location = 3) in vec3 aTangent;
+layout(location = 4) in vec3 aBitangent;
 
-uniform mat4x4 proj;
-uniform mat4x4 view;
-uniform mat4x4 model;
-uniform mat3x3 normal;
+uniform mat4 proj;
+uniform mat4 view;
+uniform mat4 model;
+uniform mat3 normal;
 
-out vec3 normalVec;
-out vec2 textureCoords;
-out vec3 FragPos;
+out VS_OUT {
+    vec2 textureCoords;
+    vec3 FragPos;
+    mat3 TBN;
+} vs_out;
 
 void main()
 {
     gl_Position = proj * view * model * vec4(aPos, 1.0);
-    normalVec = normalize(normal * aNormal);
-    textureCoords = aTexture;
-    FragPos = vec3(model * vec4(aPos, 1.));
+    vs_out.textureCoords = aTexture;
+    vs_out.FragPos = vec3(model * vec4(aPos, 1.));
+
+    // Create TBN Matrix
+    vec3 T = normalize(vec3(model * vec4(aTangent, 0.0)));
+    vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
+    vec3 N = normalize(vec3(model * vec4(aNormal, 0.0)));
+    vs_out.TBN = mat3(T, B, N);
 }
