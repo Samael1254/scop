@@ -132,6 +132,7 @@ void Renderer::_init()
 	_shader.setUniform("view", view);
 	_shader.setUniform("model", model);
 	_shader.setUniform("normal", normal);
+	_shader.setUniform("hasNormalMap", _model->getMaterial()->hasNormalMap());
 
 	_shader.setUniform("lightColor", _light.getColor());
 	_shader.setUniform("lightPos", _light.getPosition());

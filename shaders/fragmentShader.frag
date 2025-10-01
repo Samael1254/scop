@@ -4,6 +4,7 @@ in VS_OUT {
     vec2 textureCoords;
     vec3 FragPos;
     mat3 TBN;
+    vec3 normalVec;
 } fs_in;
 
 out vec4 FragColor;
@@ -23,6 +24,7 @@ uniform float specularExponent;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalMap;
+uniform bool hasNormalMap;
 
 uniform int displayMode;
 
@@ -33,9 +35,15 @@ float rand(float x)
 
 void main()
 {
-    vec3 normal = texture(normalMap, fs_in.textureCoords).rgb;
-    normal = normalize(normal * 2.0 - 1.0);
-    normal = normalize(fs_in.TBN * normal);
+    vec3 normal;
+    if (hasNormalMap)
+    {
+        normal = texture(normalMap, fs_in.textureCoords).rgb;
+        normal = normalize(normal * 2.0 - 1.0);
+        normal = normalize(fs_in.TBN * normal);
+    }
+    else
+        normal = fs_in.normalVec;
     vec3 lightDir = normalize(lightPos - fs_in.FragPos);
     float incidence = max(dot(lightDir, normal), 0.);
     vec3 ambiant = ambiantLightBrightness * ambiantLightColor;

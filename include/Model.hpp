@@ -70,8 +70,14 @@ class Model
 	                                 const std::array<Vector<3>, 2> &tangentSpace);
 	static std::string _getNextWord(std::string &line);
 	static std::string _getNextWord(std::string &line, const std::string &separators);
-	static Vector<3>   _computeNormal(const std::array<Vector<3>, 3> &vertices);
-	Vector<2>          _computeUV(const VertexIndices &vi, const Vector<3> &normal, const Vector<2> &scaling);
+	void               _computeFaceProperties(const std::vector<std::string> &lineData, unsigned int i,
+	                                          std::array<VertexIndices, 3> &vis, std::array<Vector<3>, 3> &positions,
+	                                          std::array<Vector<2>, 3> &uvs, std::array<Vector<3>, 2> &tangentSpace,
+	                                          Vector<3> &faceNormal, bool &hasNormal);
+	void             _fillVertexBuffers(const VertexIndices &vi, Vector<2> &uv, std::array<Vector<3>, 2> &tangentSpace,
+	                                    Vector<3> &faceNormal, bool &hasNormal);
+	static Vector<3> _computeNormal(const std::array<Vector<3>, 3> &vertices);
+	Vector<2>        _computeUV(const VertexIndices &vi, const Vector<3> &normal, const Vector<2> &scaling);
 	static std::array<Vector<3>, 2> _computeTangentSpace(const std::array<Vector<3>, 3> &positions,
 	                                                     const std::array<Vector<2>, 3> &uvs);
 	static float                    _remap(float a, float b, float value);

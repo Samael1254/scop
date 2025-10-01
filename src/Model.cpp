@@ -237,46 +237,57 @@ void Model::_readFace(std::string &data)
 		std::array<Vector<3>, 3>     positions;
 		std::array<Vector<2>, 3>     uvs;
 		std::array<Vector<3>, 2>     tangentSpace;
+		Vector<3>                    faceNormal;
+		bool                         hasNormal;
+		_computeFaceProperties(lineData, i, vis, positions, uvs, tangentSpace, faceNormal, hasNormal);
 		for (unsigned int j = 0; j < 3; ++j)
-		{
-			vis[j] = _readVertexIndices(lineData[3 * i + j]);
-			positions[j] = _vs[vis[j].positionID];
-		}
-		Vector<3> faceNormal;
-		bool      hasNormal = vis[0].normalID != -1 && vis[1].normalID != -1 && vis[2].normalID != -1;
-		if (!hasNormal || !_smoothShading)
-			faceNormal = _computeNormal(positions);
-		for (unsigned int j = 0; j < 3; ++j)
-		{
-			if (vis[j].textureID == -1)
-				uvs[j] =
-				    _computeUV(vis[j], hasNormal ? _vns[vis[j].normalID] : faceNormal, _material->getTextureScaling());
-			else
-				uvs[j] = _vts[vis[j].textureID];
-			tangentSpace = _computeTangentSpace(positions, uvs);
-		}
-		for (unsigned int j = 0; j < 3; ++j)
-		{
-			if (!hasNormal || !_smoothShading)
-			{
-				uint32_t index = static_cast<uint32_t>(_vertexBuffer.size() / VERTEX_SIZE);
-				_elementBuffer.push_back(index);
-				_createVertex(vis[j], faceNormal, uvs[j], tangentSpace);
-				continue;
-			}
-			std::unordered_map<VertexIndices, uint64_t, std::hash<VertexIndices>>::iterator it =
-			    _indicesMap.find(vis[j]);
-			if (it != _indicesMap.end())
-			{
-				_elementBuffer.push_back(it->second);
-				continue;
-			}
-			uint32_t index = static_cast<uint32_t>(_indicesMap.size());
-			_indicesMap.emplace(vis[j], index);
-			_elementBuffer.push_back(index);
-			_createVertex(vis[j], _vns[vis[j].normalID], uvs[j], tangentSpace);
-		}
+			_fillVertexBuffers(vis[j], uvs[j], tangentSpace, faceNormal, hasNormal);
 	}
+}
+
+void Model::_computeFaceProperties(const std::vector<std::string> &lineData, unsigned int i,
+                                   std::array<VertexIndices, 3> &vis, std::array<Vector<3>, 3> &positions,
+                                   std::array<Vector<2>, 3> &uvs, std::array<Vector<3>, 2> &tangentSpace,
+                                   Vector<3> &faceNormal, bool &hasNormal)
+{
+	for (unsigned int j = 0; j < 3; ++j)
+	{
+		vis[j] = _readVertexIndices(lineData[3 * i + j]);
+		positions[j] = _vs[vis[j].positionID];
+	}
+	hasNormal = vis[0].normalID != -1 && vis[1].normalID != -1 && vis[2].normalID != -1;
+	if (!hasNormal || !_smoothShading)
+		faceNormal = _computeNormal(positions);
+	for (unsigned int j = 0; j < 3; ++j)
+	{
+		if (vis[j].textureID == -1)
+			uvs[j] = _computeUV(vis[j], hasNormal ? _vns[vis[j].normalID] : faceNormal, _material->getTextureScaling());
+		else
+			uvs[j] = _vts[vis[j].textureID];
+		tangentSpace = _computeTangentSpace(positions, uvs);
+	}
+}
+
+void Model::_fillVertexBuffers(const VertexIndices &vi, Vector<2> &uv, std::array<Vector<3>, 2> &tangentSpace,
+                               Vector<3> &faceNormal, bool &hasNormal)
+{
+	if (!hasNormal || !_smoothShading)
+	{
+		uint32_t index = static_cast<uint32_t>(_vertexBuffer.size() / VERTEX_SIZE);
+		_elementBuffer.push_back(index);
+		_createVertex(vi, faceNormal, uv, tangentSpace);
+		return;
+	}
+	std::unordered_map<VertexIndices, uint64_t, std::hash<VertexIndices>>::iterator it = _indicesMap.find(vi);
+	if (it != _indicesMap.end())
+	{
+		_elementBuffer.push_back(it->second);
+		return;
+	}
+	uint32_t index = static_cast<uint32_t>(_indicesMap.size());
+	_indicesMap.emplace(vi, index);
+	_elementBuffer.push_back(index);
+	_createVertex(vi, _vns[vi.normalID], uv, tangentSpace);
 }
 
 void Model::_triangulateFace(std::vector<std::string> &lineData)

@@ -15,6 +15,7 @@ out VS_OUT {
     vec2 textureCoords;
     vec3 FragPos;
     mat3 TBN;
+    vec3 normalVec;
 } vs_out;
 
 void main()
@@ -22,6 +23,7 @@ void main()
     gl_Position = proj * view * model * vec4(aPos, 1.0);
     vs_out.textureCoords = aTexture;
     vs_out.FragPos = vec3(model * vec4(aPos, 1.));
+    vs_out.normalVec = normalize(normal * aNormal);
 
     // Create TBN Matrix
     vec3 T = normalize(vec3(model * vec4(aTangent, 0.0)));
