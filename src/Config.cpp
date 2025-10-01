@@ -46,6 +46,15 @@ const Config::Object &Config::getObject() const
 	return _object;
 }
 
+const Config::Light &Config::getLight() const
+{
+	return _light;
+}
+const Config::Ambiant &Config::getAmbiant() const
+{
+	return _ambiant;
+}
+
 void Config::print() const
 {
 	std::cout << std::boolalpha;
@@ -112,6 +121,12 @@ void Config::_loadConfig(const std::string &confFile)
 			case OBJECT:
 				_loadObject(key, value);
 				break;
+			case LIGHT:
+				_loadLight(key, value);
+				break;
+			case AMBIANT:
+				_loadAmbiant(key, value);
+				break;
 			}
 		}
 		catch (std::exception &e)
@@ -136,6 +151,10 @@ Config::Table Config::_switchTable(std::string &line)
 		return Table::CAMERA;
 	if (line == "Object")
 		return Table::OBJECT;
+	if (line == "Light")
+		return Table::LIGHT;
+	if (line == "Ambiant")
+		return Table::AMBIANT;
 	throw std::runtime_error("unknown table value: " + line);
 }
 
@@ -187,4 +206,24 @@ void Config::_loadObject(const std::string &key, const std::string &value)
 		_object.zoomSpeed = TomlParser::readFloat(key, value);
 	else
 		throw std::runtime_error("unknown key in 'Object': " + key);
+}
+
+void Config::_loadLight(const std::string &key, const std::string &value)
+{
+	if (key == "color")
+		_light.color = TomlParser::readColor(key, value);
+	else if (key == "brightness")
+		_light.brightness = TomlParser::readFloat(key, value);
+	else
+		throw std::runtime_error("unknown key in 'Light': " + key);
+}
+
+void Config::_loadAmbiant(const std::string &key, const std::string &value)
+{
+	if (key == "color")
+		_ambiant.color = TomlParser::readColor(key, value);
+	else if (key == "brightness")
+		_ambiant.brightness = TomlParser::readFloat(key, value);
+	else
+		throw std::runtime_error("unknown key in 'Ambiant': " + key);
 }

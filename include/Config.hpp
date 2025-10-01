@@ -36,6 +36,16 @@ class Config
 		float translationSpeed = 0.03;
 		float zoomSpeed = 0.1;
 	} _object;
+	struct Light
+	{
+		std::array<float, 3> color = {1, 1, 1};
+		float                brightness = 0.7;
+	} _light;
+	struct Ambiant
+	{
+		std::array<float, 3> color = {1, 1, 1};
+		float                brightness = 0.2;
+	} _ambiant;
 
 	enum Table : uint8_t
 	{
@@ -44,6 +54,8 @@ class Config
 		BACKGROUND,
 		CAMERA,
 		OBJECT,
+		LIGHT,
+		AMBIANT,
 	};
 
 	void _loadConfig(const std::string &confFile);
@@ -55,6 +67,8 @@ class Config
 	void _loadBackground(const std::string &key, const std::string &value);
 	void _loadCamera(const std::string &key, const std::string &value);
 	void _loadObject(const std::string &key, const std::string &value);
+	void _loadLight(const std::string &key, const std::string &value);
+	void _loadAmbiant(const std::string &key, const std::string &value);
 
 	std::string _parseKey(const std::string &line);
 	std::string _parseValue(const std::string &line);
@@ -70,4 +84,6 @@ class Config
 	const Background &getBackground() const;
 	const Camera     &getCamera() const;
 	const Object     &getObject() const;
+	const Light      &getLight() const;
+	const Ambiant    &getAmbiant() const;
 };

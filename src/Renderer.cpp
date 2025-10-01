@@ -13,8 +13,9 @@
 Renderer::Renderer(const Config &config, Model *model)
     : _config(config), _model(model), _shader(Shader("vertexShader.vert", "fragmentShader.frag")),
       _camera(config.getWindow().width, config.getWindow().height, config.getCamera().fov),
-      _light(PointLight(-1 * _camera.getPosition(), Vector<3>{1, 1, 1}, 0.7)), _ambiantLight(Vector<3>{1, 1, 1}, 0.2),
-      _displayMode(REGULAR), _polygonMode(GL_FILL)
+      _light(PointLight(-1 * _camera.getPosition(), Vector<3>(config.getLight().color), config.getLight().brightness)),
+      _ambiantLight(Vector<3>(config.getAmbiant().color), config.getAmbiant().brightness), _displayMode(REGULAR),
+      _polygonMode(GL_FILL)
 {
 	_init();
 }

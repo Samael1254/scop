@@ -18,3 +18,11 @@ fov = 1.047 # Camera field of view (default: 1.047)
 rotationSpeed = 0.03 # Object rotation speed (default 0.03)
 translationSpeed = 0.03 # Object translation speed (default 0.03)
 zoomSpeed = 0.1 # Object zoom speed (default 0.1)
+
+[Light]
+color = "#ffffff"
+brightness = 0.7
+
+[Ambiant]
+color = "#ffffff"
+brightness = 0.2
