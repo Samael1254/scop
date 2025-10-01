@@ -6,3 +6,4 @@ Ka 1.000000 1.000000 1.000000
 Kd 1.000000 1.000000 1.000000
 Ks 1.000000 1.000000 1.000000
 map_Kd resources/textures/horse.bmp
+bump resources/normalMaps/horse_nm.bmp
