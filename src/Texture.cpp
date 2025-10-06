@@ -1,4 +1,5 @@
 #include "Texture.hpp"
+#include "Engine.hpp"
 #include <array>
 #include <cmath>
 #include <cstdint>
@@ -45,9 +46,7 @@ int Texture::height() const
 
 void Texture::_loadBMP(const std::string &filepath)
 {
-	std::ifstream is(filepath);
-	if (!is.is_open())
-		throw std::runtime_error("failed to open .bmp file: " + filepath);
+	std::ifstream is = Engine::openFile(filepath, "bmp");
 
 	_readHeaders(is);
 	if (_imageInfo.bitsPerPixel <= 8)

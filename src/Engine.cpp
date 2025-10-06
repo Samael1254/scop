@@ -47,6 +47,16 @@ void Engine::updateActiveMaterial(const std::string &name)
 	_model.setMaterial(_mtl.getMaterial(name));
 }
 
+std::ifstream Engine::openFile(const std::string &filepath, const std::string &extension)
+{
+	if (!filepath.ends_with("." + extension))
+		throw std::runtime_error("file " + filepath + " has invalid extension: expected ." + extension);
+	std::ifstream is(filepath);
+	if (!is.is_open())
+		throw std::runtime_error("failed to open file: " + filepath);
+	return is;
+}
+
 void Engine::_init()
 {
 	_initGLFW();

@@ -1,4 +1,5 @@
 #include "MaterialLibrary.hpp"
+#include "Engine.hpp"
 #include "Material.hpp"
 #include "Texture.hpp"
 #include "Vector.hpp"
@@ -58,9 +59,7 @@ Material *MaterialLibrary::getMaterial(const std::string &name)
 
 void MaterialLibrary::_loadMTL(const std::string &filepath)
 {
-	std::ifstream is(filepath);
-	if (!is.is_open())
-		throw std::runtime_error("failed to open .mtl file: " + filepath);
+	std::ifstream is = Engine::openFile(filepath, "mtl");
 
 	std::string line;
 	while (std::getline(is, line))

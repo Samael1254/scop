@@ -5,6 +5,7 @@
 #include "Model.hpp"
 #include "Renderer.hpp"
 #include <GLFW/glfw3.h>
+#include <fstream>
 #include <glad/gl.h>
 
 class Engine
@@ -18,6 +19,8 @@ class Engine
 	void loadMaterialLibrary(const std::string &filepath);
 	void updateActiveMaterial();
 	void updateActiveMaterial(const std::string &name);
+
+	static std::ifstream openFile(const std::string &filepath, const std::string &extension);
 
   private:
 	Config      _config;

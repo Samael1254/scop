@@ -1,4 +1,5 @@
 #include "Model.hpp"
+#include "Engine.hpp"
 #include "Material.hpp"
 #include "MaterialLibrary.hpp"
 #include "Matrix.hpp"
@@ -157,9 +158,7 @@ void Model::_init()
 
 void Model::_loadModel(const std::string &filepath, MaterialLibrary &mtl)
 {
-	std::ifstream is(filepath);
-	if (!is.is_open())
-		throw std::runtime_error("failed to open .obj file: " + filepath);
+	std::ifstream is = Engine::openFile(filepath, "obj");
 
 	std::string              buf;
 	std::vector<std::string> validTypes = {"v", "vt", "vn", "f", "mtllib"};
