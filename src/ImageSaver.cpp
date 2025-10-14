@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cstdint>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -20,6 +21,7 @@ void ImageSaver::saveFrame(const std::string &screenshotDir, int width, int heig
 		throw std::runtime_error("could not create file: " + filename);
 	_writeFrameToBMP(os, width, height);
 	os.close();
+	std::cout << filename << " saved in screenshots/\n";
 }
 
 void ImageSaver::_createScreenshotDir(const std::string &screenshotDir)
@@ -43,7 +45,7 @@ std::string ImageSaver::_getValidFilename(const std::string &screenshotDir)
 	while (access((filename).c_str(), F_OK) == 0)
 	{
 		std::stringstream ss;
-		ss << screenshotDir << "/screenshots_" << i << ".bmp";
+		ss << screenshotDir << "/screenshot_" << i << ".bmp";
 		filename = ss.str();
 		i++;
 	}
