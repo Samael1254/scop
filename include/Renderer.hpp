@@ -15,7 +15,6 @@ class Renderer
 {
   public:
 	Renderer(const Config &config, Model *model);
-	// Renderer(const Renderer &other) = default;
 	~Renderer() = default;
 
 	Renderer &operator=(const Renderer &other);
